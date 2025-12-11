@@ -120,3 +120,18 @@ int main(){
 ```
 测试结果如下：
    ![alt text](image.png)
+   ## 用户代码部分
+
+   用户代码部分可以包含C/C++代码，这些代码在词法分析过程中是不处理的，只有在词法分析结束后才会执行。  
+
+   ## 实现Homelang DSL
+   根据计划书中的定义在lexer.l中修改代码，与Homelang的词法分析相匹配。可以根据上面的例子的代码框架来实现，然后用测试用例来测试，只进行进行打印，看词法分析是否正确。
+   然后可以进一步在动作中完善相应操作，为后面的语法分析实现相关复制等等。
+   ### 环境配置
+   在github上下载[win_flex_bison.zip](https://github.com/lexxmark/winflexbison/releases/download/v2.5.25/win_flex_bison-2.5.25.zip),然后解压放到一个目录下，再将文件夹所在目录添加到Path环境变量中，例如`D:\win_flex_bison-2.5.25`。然后在终端中运行`win_flex --version`,如果能看到版本号，说明成功，可能在vscode中运行检测不到命令，将vscode关闭后重启即可，实在不行可以重启电脑试试。
+   ### 一些注意事项
+   + 删除`#include "parser.tab.h"`,这是与后面语法分析共同使用时才用得到，单纯的词法分析用不到。
+   + 源语言（Homelang）的输入文件打开地址为`D:/input.txt`中，不要放到更深的目录中，否则在运行时可能会卡住，没有结果。
+   + 修改好lexer.l文件后，在lexer.l文件所在目录下运行`win_flex lexer.l`，会生成lex.yy.c文件，然后运行`gcc lex.yy.c -o lex.yy.exe`生成lex.yy.exe文件，然后运行`lex.yy.exe`即可得到结果。
+   + parser目录是语法分析，暂时不管。
+   + 还可能有些我没遇到的问题，可以随时来问我。
