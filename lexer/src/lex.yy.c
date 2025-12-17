@@ -572,6 +572,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "lexer.l"
 #line 2 "lexer.l"
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -587,7 +588,7 @@ char* copy_string(const char* src) {
 /* 行号计数器 */
 int line = 1;
 
-#line 590 "lex.yy.c"
+#line 591 "lex.yy.c"
 /* 正则表达式定义 - 根据HomeLang规范修改 */
 /* 标识符部分（基础标识符） */
 /* 带点号的标识符 */
@@ -596,7 +597,7 @@ int line = 1;
 /* 时间点定义 */
 /* 注释 */
 /* 空白字符 */
-#line 599 "lex.yy.c"
+#line 600 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -813,12 +814,12 @@ YY_DECL
 		}
 
 	{
-#line 50 "lexer.l"
+#line 51 "lexer.l"
 
 
-#line 53 "lexer.l"
+#line 54 "lexer.l"
     /* ========== 关键字 ========== */
-#line 821 "lex.yy.c"
+#line 822 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -877,134 +878,134 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 54 "lexer.l"
+#line 55 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 55 "lexer.l"
+#line 56 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 56 "lexer.l"
+#line 57 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 57 "lexer.l"
+#line 58 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 58 "lexer.l"
+#line 59 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 59 "lexer.l"
+#line 60 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 60 "lexer.l"
+#line 61 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 61 "lexer.l"
+#line 62 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 62 "lexer.l"
+#line 63 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 63 "lexer.l"
+#line 64 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 64 "lexer.l"
+#line 65 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 65 "lexer.l"
+#line 66 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 66 "lexer.l"
+#line 67 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 67 "lexer.l"
+#line 68 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 68 "lexer.l"
+#line 69 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 69 "lexer.l"
+#line 70 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 70 "lexer.l"
+#line 71 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 71 "lexer.l"
+#line 72 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 72 "lexer.l"
+#line 73 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 73 "lexer.l"
+#line 74 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 74 "lexer.l"
+#line 75 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 75 "lexer.l"
+#line 76 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 76 "lexer.l"
+#line 77 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 77 "lexer.l"
+#line 78 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 78 "lexer.l"
+#line 79 "lexer.l"
 { printf("line%d: (keyword, %s)\n", line, yytext); }
 	YY_BREAK
 /* ========== 标识符 ========== */
 /* 支持点号分隔的标识符 */
 case 26:
 YY_RULE_SETUP
-#line 82 "lexer.l"
+#line 83 "lexer.l"
 { 
     printf("line%d: (identify, %s)\n", line, yytext); 
 }
@@ -1014,7 +1015,7 @@ YY_RULE_SETUP
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 88 "lexer.l"
+#line 89 "lexer.l"
 { 
     printf("line%d: (string, %s)\n", line, yytext); 
 }
@@ -1022,14 +1023,14 @@ YY_RULE_SETUP
 /* 整数数字字面量 */
 case 28:
 YY_RULE_SETUP
-#line 93 "lexer.l"
+#line 94 "lexer.l"
 { 
     printf("line%d: (integer, %s)\n", line, yytext); 
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 97 "lexer.l"
+#line 98 "lexer.l"
 {
     printf("line%d: (integer, %s)\n", line, yytext);
 }
@@ -1037,14 +1038,14 @@ YY_RULE_SETUP
 /* 浮点数数字字面量 */
 case 30:
 YY_RULE_SETUP
-#line 102 "lexer.l"
+#line 103 "lexer.l"
 { 
     printf("line%d: (float, %s)\n", line, yytext); 
 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 106 "lexer.l"
+#line 107 "lexer.l"
 { 
     printf("line%d: (float, %s)\n", line, yytext); 
 }
@@ -1052,7 +1053,7 @@ YY_RULE_SETUP
 /* 布尔值 */
 case 32:
 YY_RULE_SETUP
-#line 111 "lexer.l"
+#line 112 "lexer.l"
 {
     printf("line%d: (boolean, %s)\n", line, yytext);
 }
@@ -1060,7 +1061,7 @@ YY_RULE_SETUP
 /* 时间点 */
 case 33:
 YY_RULE_SETUP
-#line 116 "lexer.l"
+#line 117 "lexer.l"
 {
     printf("line%d: (timepoint, %s)\n", line, yytext);
 }
@@ -1068,7 +1069,7 @@ YY_RULE_SETUP
 /* 状态 */
 case 34:
 YY_RULE_SETUP
-#line 121 "lexer.l"
+#line 122 "lexer.l"
 {
     printf("line%d: (state, %s)\n", line, yytext);
 }
@@ -1077,110 +1078,110 @@ YY_RULE_SETUP
 /* 比较运算符 */
 case 35:
 YY_RULE_SETUP
-#line 127 "lexer.l"
+#line 128 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 128 "lexer.l"
+#line 129 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 129 "lexer.l"
+#line 130 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 130 "lexer.l"
+#line 131 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 131 "lexer.l"
+#line 132 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 132 "lexer.l"
+#line 133 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 /* 算术运算符 */
 case 41:
 YY_RULE_SETUP
-#line 135 "lexer.l"
+#line 136 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 136 "lexer.l"
+#line 137 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 137 "lexer.l"
+#line 138 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 138 "lexer.l"
+#line 139 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 /* 赋值运算符 */
 case 45:
 YY_RULE_SETUP
-#line 141 "lexer.l"
+#line 142 "lexer.l"
 { printf("line%d: (operator, %s)\n", line, yytext); }
 	YY_BREAK
 /* ========== 分隔符 ========== */
 case 46:
 YY_RULE_SETUP
-#line 144 "lexer.l"
+#line 145 "lexer.l"
 { printf("line%d: (bracket, %s)\n", line, yytext); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 145 "lexer.l"
+#line 146 "lexer.l"
 { printf("line%d: (bracket, %s)\n", line, yytext); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 146 "lexer.l"
+#line 147 "lexer.l"
 { printf("line%d: (bracket, %s)\n", line, yytext); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 147 "lexer.l"
+#line 148 "lexer.l"
 { printf("line%d: (bracket, %s)\n", line, yytext); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 148 "lexer.l"
+#line 149 "lexer.l"
 { printf("line%d: (bracket, %s)\n", line, yytext); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 149 "lexer.l"
+#line 150 "lexer.l"
 { printf("line%d: (bracket, %s)\n", line, yytext); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 150 "lexer.l"
+#line 151 "lexer.l"
 { printf("line%d: (separator, %s)\n", line, yytext); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 151 "lexer.l"
+#line 152 "lexer.l"
 { printf("line%d: (separator, %s)\n", line, yytext); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 152 "lexer.l"
+#line 153 "lexer.l"
 { printf("line%d: (separator, %s)\n", line, yytext); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 153 "lexer.l"
+#line 154 "lexer.l"
 { printf("line%d: (separator, %s)\n", line, yytext); }
 	YY_BREAK
 /* ========== 特殊处理 ========== */
@@ -1188,7 +1189,7 @@ YY_RULE_SETUP
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 157 "lexer.l"
+#line 158 "lexer.l"
 { 
     line++; 
 }
@@ -1196,7 +1197,7 @@ YY_RULE_SETUP
 /* 注释 - 忽略 */
 case 57:
 YY_RULE_SETUP
-#line 162 "lexer.l"
+#line 163 "lexer.l"
 { 
     /* 如果需要输出注释，可以取消下面的注释 */
     /* printf("line%d: (comment, %s)\n", line, yytext); */ 
@@ -1205,23 +1206,23 @@ YY_RULE_SETUP
 /* 空白字符 - 忽略 */
 case 58:
 YY_RULE_SETUP
-#line 168 "lexer.l"
+#line 169 "lexer.l"
 { /* 忽略空格、制表符、回车 */ }
 	YY_BREAK
 /* 其他字符 - 作为错误处理 */
 case 59:
 YY_RULE_SETUP
-#line 171 "lexer.l"
+#line 172 "lexer.l"
 { 
     printf("line%d: (error, 非法字符 '%c')\n", line, yytext[0]); 
 }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 175 "lexer.l"
+#line 176 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1224 "lex.yy.c"
+#line 1225 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2226,7 +2227,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 175 "lexer.l"
+#line 176 "lexer.l"
 
 
 int yywrap() {
@@ -2235,6 +2236,7 @@ int yywrap() {
 
 /* 主函数用于测试 */
 int main(){
+    SetConsoleOutputCP(65001);
 	yyin=fopen("D:/input.txt","r");
 	yylex();
 	return 0;
