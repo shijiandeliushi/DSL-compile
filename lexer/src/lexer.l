@@ -1,4 +1,5 @@
 %{
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -191,6 +192,7 @@ int yywrap() {
 
 /* 主函数用于测试 */
 int main(){
+    SetConsoleOutputCP(65001);
 	yyin=fopen("D:/input.txt","r");
 	yylex();
 	return 0;
