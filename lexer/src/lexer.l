@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
+#include <locale.h>
 //#include "parser.tab.h"  /* Bison 生成的头文件 */
 
 /* 复制字符串函数 */
@@ -15,6 +17,8 @@ char* copy_string(const char* src) {
 int line = 1;
 
 %}
+
+
 
 /* 正则表达式定义 - 根据HomeLang规范修改 */
 DIGIT           [0-9]
@@ -37,6 +41,9 @@ NUMBER          {INTEGER}|{FLOAT_NUM}|{ZERO_FLOAT}|0
 
 /* 字符串定义 */
 STRING          \"([^\"\\]|\\.)*\"
+
+/*汉字定义*/
+CHINESE        [\u4E00-\u9FFF]+     //识别汉字
 
 /* 时间点定义 */
 TIMEPOINT       ([01]?[0-9]|2[0-3]):[0-5][0-9]
@@ -88,6 +95,11 @@ WHITESPACE      [ \t\r]+
     printf("line%d: (string, %s)\n", line, yytext); 
 }
 
+    /* 汉字字面量 */
+
+[\u4E00-\u9FFF]+  { 
+    printf("line%d: (chinese, %s)\n", line, yytext); 
+}
     /* 整数数字字面量 */
 {INTEGER}    { 
     printf("line%d: (integer, %s)\n", line, yytext); 
