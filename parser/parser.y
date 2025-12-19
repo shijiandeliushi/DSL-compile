@@ -3,33 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-// AST 节点定义
-typedef struct ASTNode {
-    char *type;            // 节点类型
-    char *value;           // 节点值
-    struct ASTNode *left;  // 左子节点
-    struct ASTNode *right; // 右子节点
-} ASTNode;
+#include "ast.h"  // 包含 AST 相关定义
 
-// 创建 AST 节点
-ASTNode* create_node(char *type, char *value) {
-    ASTNode *node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = strdup(type);
-    node->value = value ? strdup(value) : NULL;
-    node->left = node->right = NULL;
-    return node;
-}
+#include <windows.h>
 
-// 打印 AST
-void print_ast(ASTNode *node, int depth) {
-    if (!node) return;
-    for (int i = 0; i < depth; i++) printf("  ");
-    printf("%s", node->type);
-    if (node->value) printf(": %s", node->value);
-    printf("\n");
-    print_ast(node->left, depth + 1);
-    print_ast(node->right, depth + 1);
-}
+
+
+
 
 // 声明词法分析器函数
 extern int yylex();
@@ -42,9 +22,15 @@ void yyerror(const char *s) {
     fprintf(stderr, "错误 (第 %d 行): %s\n", yylineno, s);
 }
 
-// 根节点
+
 ASTNode *ast_root = NULL;
 %}
+
+/* Ensure ASTNode type is visible to the generated header (parser.tab.h)
+    so other files that include it (lexer) see the typedef before YYSTYPE. */
+%code requires {
+#include "ast.h"
+}
 
 /* 定义语义值类型 */
 %union {
@@ -54,27 +40,26 @@ ASTNode *ast_root = NULL;
     ASTNode *ast_node;
 }
 
-/* 声明终结符并关联类型 */
+/* 终结符（token）声明：把 lexer 中可能返回的 token 列出并关联 union 字段（若有） */
+%token <str_val> DEVICE AS VAR WHEN THEN SET TO BETWEEN AND OR TIME TEMPERATURE DURATION BOOL0 RULE
+%token IF ELSE WHILE DO FOR AFTER BEFORE DAY OF WEEK IN_TOKEN
+%token <str_val> LIGHT AIR_CONDITIONER WATER_HEATER TELEVISION WASHER FRIDGE ELECTRIC_FAN
+%token <str_val> FALSE0 TRUE0 ON OFF
+%token <str_val> MON TUE WED THU FRI SAT SUN
+
+%token <str_val> IDENTIFIER STRING_LITERAL TIMEPOINT
 %token <int_val> INT_NUMBER
 %token <float_val> FLOAT_NUMBER
-%token <str_val> IDENTIFIER STRING_LITERAL
 
-/* 关键字 - 不需要值 */
-%token INT FLOAT VOID IF ELSE WHILE FOR RETURN
-
-/* 运算符和分隔符 - 不需要值 */
-%token PLUS MINUS TIMES DIVIDE ASSIGN
-%token EQ NEQ LT GT LE GE
-%token LPAREN RPAREN LBRACE RBRACE SEMICOLON COMMA
+%token <str_val> EQ NEQ LT GT LE GE
+%token <str_val> PLUS MINUS TIMES DIVIDE ASSIGN
+%token <str_val> LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
+%token <str_val> SEMICOLON COMMA COLON DOT
 
 /* 声明非终结符的类型 */
-%type <ast_node> program declaration_list declaration
-%type <ast_node> var_declaration type_specifier
-%type <ast_node> statement_list statement compound_statement
-%type <ast_node> expression_statement expression
-%type <ast_node> additive_expression multiplicative_expression
-%type <ast_node> primary_expression selection_statement
-%type <ast_node> iteration_statement jump_statement
+%type <ast_node> program deviceDeclarationList deviceDeclaration deviceType
+
+
 
 /* 优先级和结合性定义 */
 %left OR
@@ -82,7 +67,7 @@ ASTNode *ast_root = NULL;
 %left EQ NEQ
 %left LT GT LE GE
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE //TIMES是*
 %right UNARY_MINUS NOT
 %nonassoc LPAREN RPAREN
 
@@ -91,207 +76,68 @@ ASTNode *ast_root = NULL;
 
 %%
 /* 语法规则 */
+//字母全部大写的终结符，由词法分析器yylex()返回的，小写字母开头的时非终结符
+program: deviceDeclarationList { ast_root = $1; }
 
-/* 程序由一系列声明组成 */
-program:
-    declaration_list {
-        ast_root = $1;
-        printf("语法分析成功！\n");
-        $$ = $1;
-    }
-    ;
+deviceDeclarationList: deviceDeclarationList deviceDeclaration
+                     {
+                         /* 构建 DeviceDeclarationList 节点，结构：
+                            DeviceDeclarationList
+                            ├─ DeviceDeclarationList (子节点，由前一个 deviceDeclarationList 产生式返回的 AST 节点)
+                            └─ DeviceDeclaration (子节点，由 deviceDeclaration 产生式返回的 AST 节点)
+                         */
+                         $$ = create_node("DeviceDeclarationList", NULL);
+                         add_child($$, $1);  // 前一个设备声明列表
+                         add_child($$, $2);  // 当前设备声明
+                     }
+                   | deviceDeclaration
+                     {
+                         /* 单个设备声明时，直接返回该设备声明的 AST 节点 */
+                         $$ = create_node("DeviceDeclarationList", NULL);
+                         add_child($$, $1);
+                     }
+                   ;
+deviceDeclaration: DEVICE deviceType IDENTIFIER AS STRING_LITERAL
+                 {
+                     /* 构建 DeviceDeclaration 节点，结构：
+                        DeviceDeclaration
+                        ├─ DEVICE (终结符)
+                        ├─ DeviceType (子节点，由 deviceType 产生式返回的 AST 节点)
+                        ├─ Identifier (终结符)
+                        ├─ AS (终结符)
+                        └─ StringLiteral (终结符)
+                     */
+                     $$ = create_node("DeviceDeclaration", NULL);
+                     /* 把终结符 DEVICE 也作为叶子节点加入 */
+                     add_child($$, create_node("DEVICE", $1));
+                     /* deviceType 已经返回 AST 节点 */
+                     add_child($$, $2);
+                     /* 标识符、AS、字符串作为叶子节点 */
+                     add_child($$, create_node("Identifier", $3));
+                     add_child($$, create_node("AS", $4));
+                     add_child($$, create_node("StringLiteral", $5));
+                     //print_ast_tree($$);  // 打印当前设备声明的 AST
+                 }
 
-/* 声明列表 */
-declaration_list:
-    declaration {
-        $$ = create_node("DECLARATION_LIST", NULL);
-        $$->left = $1;
-    }
-    | declaration_list declaration {
-        // 将新声明添加到列表末尾
-        ASTNode *current = $1;
-        while (current->right) current = current->right;
-        current->right = $2;
-        $$ = $1;
-    }
-    ;
+deviceType: LIGHT           { $$ = create_node("DeviceType", $1); }
+          | AIR_CONDITIONER  { $$ = create_node("DeviceType", $1); }
+          | WATER_HEATER     { $$ = create_node("DeviceType", $1); }
+          | TELEVISION       { $$ = create_node("DeviceType", $1); }
+          | WASHER           { $$ = create_node("DeviceType", $1); }
+          | FRIDGE           { $$ = create_node("DeviceType", $1); }
+          | ELECTRIC_FAN     { $$ = create_node("DeviceType", $1); }
+          ;
 
-/* 声明可以是变量声明或函数声明（简化版只实现变量） */
-declaration:
-    var_declaration SEMICOLON {
-        $$ = $1;
-    }
-    ;
 
-/* 变量声明 */
-var_declaration:
-    type_specifier IDENTIFIER {
-        $$ = create_node("VAR_DECL", $2);
-        $$->left = $1;  // 类型作为左子节点
-    }
-    | type_specifier IDENTIFIER ASSIGN expression {
-        $$ = create_node("VAR_DECL_WITH_INIT", $2);
-        $$->left = $1;      // 类型
-        $$->right = $4;     // 初始值
-    }
-    ;
-
-/* 类型说明符 */
-type_specifier:
-    INT {
-        $$ = create_node("TYPE", "int");
-    }
-    | FLOAT {
-        $$ = create_node("TYPE", "float");
-    }
-    | VOID {
-        $$ = create_node("TYPE", "void");
-    }
-    ;
-
-/* 语句列表 */
-statement_list:
-    statement {
-        $$ = create_node("STATEMENT_LIST", NULL);
-        $$->left = $1;
-    }
-    | statement_list statement {
-        ASTNode *current = $1;
-        while (current->right) current = current->right;
-        current->right = $2;
-        $$ = $1;
-    }
-    ;
-
-/* 语句 */
-statement:
-    expression_statement
-    | compound_statement
-    | selection_statement
-    | iteration_statement
-    | jump_statement
-    ;
-
-/* 表达式语句 */
-expression_statement:
-    expression SEMICOLON {
-        $$ = $1;
-    }
-    | SEMICOLON {  /* 空语句 */
-        $$ = create_node("EMPTY_STATEMENT", NULL);
-    }
-    ;
-
-/* 复合语句 */
-compound_statement:
-    LBRACE statement_list RBRACE {
-        $$ = $2;
-        $$->type = "COMPOUND_STATEMENT";
-    }
-    ;
-
-/* 选择语句 (if-else) */
-selection_statement:
-    IF LPAREN expression RPAREN statement {
-        $$ = create_node("IF_STATEMENT", NULL);
-        $$->left = $3;      // 条件
-        $$->right = $5;     // then 分支
-    }
-    | IF LPAREN expression RPAREN statement ELSE statement {
-        $$ = create_node("IF_ELSE_STATEMENT", NULL);
-        $$->left = $3;      // 条件
-        $$->right = create_node("IF_BRANCHES", NULL);
-        $$->right->left = $5;    // then 分支
-        $$->right->right = $7;   // else 分支
-    }
-    ;
-
-/* 循环语句 */
-iteration_statement:
-    WHILE LPAREN expression RPAREN statement {
-        $$ = create_node("WHILE_STATEMENT", NULL);
-        $$->left = $3;      // 条件
-        $$->right = $5;     // 循环体
-    }
-    ;
-
-/* 跳转语句 */
-jump_statement:
-    RETURN expression SEMICOLON {
-        $$ = create_node("RETURN", NULL);
-        $$->left = $2;
-    }
-    | RETURN SEMICOLON {
-        $$ = create_node("RETURN", "void");
-    }
-    ;
-
-/* 表达式层次结构 */
-expression:
-    IDENTIFIER ASSIGN expression {
-        $$ = create_node("ASSIGN", $1);
-        $$->left = $3;
-    }
-    | additive_expression
-    ;
-
-additive_expression:
-    multiplicative_expression
-    | additive_expression PLUS multiplicative_expression {
-        $$ = create_node("BIN_OP", "+");
-        $$->left = $1;
-        $$->right = $3;
-    }
-    | additive_expression MINUS multiplicative_expression {
-        $$ = create_node("BIN_OP", "-");
-        $$->left = $1;
-        $$->right = $3;
-    }
-    ;
-
-multiplicative_expression:
-    primary_expression
-    | multiplicative_expression TIMES primary_expression {
-        $$ = create_node("BIN_OP", "*");
-        $$->left = $1;
-        $$->right = $3;
-    }
-    | multiplicative_expression DIVIDE primary_expression {
-        $$ = create_node("BIN_OP", "/");
-        $$->left = $1;
-        $$->right = $3;
-    }
-    ;
-
-primary_expression:
-    INT_NUMBER {
-        char buffer[20];
-        sprintf(buffer, "%d", $1);
-        $$ = create_node("INT_CONST", buffer);
-    }
-    | FLOAT_NUMBER {
-        char buffer[30];
-        sprintf(buffer, "%f", $1);
-        $$ = create_node("FLOAT_CONST", buffer);
-    }
-    | IDENTIFIER {
-        $$ = create_node("IDENTIFIER", $1);
-    }
-    | STRING_LITERAL {
-        $$ = create_node("STRING_LITERAL", $1);
-    }
-    | LPAREN expression RPAREN {
-        $$ = $2;
-    }
-    | MINUS primary_expression %prec UNARY_MINUS {
-        $$ = create_node("UNARY_OP", "-");
-        $$->left = $2;
-    }
-    ;
 
 %%
 
 int main(int argc, char **argv) {
+    /* 在 Windows 下设置控制台为 UTF-8，便于显示中文 */
+#ifdef _WIN32
+    SetConsoleOutputCP(65001);
+#endif
+    /* 优先使用命令行指定的输入文件；否则使用仓库根下的 D:\\input.txt 作为默认输入 */
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
         if (!yyin) {
@@ -299,15 +145,19 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else {
-        yyin = stdin;
-        printf("请输入代码，以 Ctrl+Z (Windows) 结束:\n");
+        const char *default_path = "D:\\input.txt";
+        yyin = fopen(default_path, "r");
+        if (!yyin) {
+            fprintf(stderr, "无法打开默认输入文件: %s\n", default_path);
+            return 1;
+        }
     }
     
     printf("开始语法分析...\n");
     if (yyparse() == 0) {
         printf("\n=== 抽象语法树 (AST) ===\n");
         if (ast_root) {
-            print_ast(ast_root, 0);
+            print_ast_tree(ast_root);
         } else {
             printf("AST 为空\n");
         }

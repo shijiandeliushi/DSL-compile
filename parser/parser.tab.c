@@ -67,39 +67,19 @@
 
 
 /* First part of user prologue.  */
-#line 1 "parser.y"
+#line 1 "parser\\parser.y"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// AST 节点定义
-typedef struct ASTNode {
-    char *type;            // 节点类型
-    char *value;           // 节点值
-    struct ASTNode *left;  // 左子节点
-    struct ASTNode *right; // 右子节点
-} ASTNode;
+#include "ast.h"  // 包含 AST 相关定义
 
-// 创建 AST 节点
-ASTNode* create_node(char *type, char *value) {
-    ASTNode *node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = strdup(type);
-    node->value = value ? strdup(value) : NULL;
-    node->left = node->right = NULL;
-    return node;
-}
+#include <windows.h>
 
-// 打印 AST
-void print_ast(ASTNode *node, int depth) {
-    if (!node) return;
-    for (int i = 0; i < depth; i++) printf("  ");
-    printf("%s", node->type);
-    if (node->value) printf(": %s", node->value);
-    printf("\n");
-    print_ast(node->left, depth + 1);
-    print_ast(node->right, depth + 1);
-}
+
+
+
 
 // 声明词法分析器函数
 extern int yylex();
@@ -112,10 +92,10 @@ void yyerror(const char *s) {
     fprintf(stderr, "错误 (第 %d 行): %s\n", yylineno, s);
 }
 
-// 根节点
+
 ASTNode *ast_root = NULL;
 
-#line 119 "parser.tab.c"
+#line 99 "parser\\parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -146,49 +126,83 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_INT_NUMBER = 3,                 /* INT_NUMBER  */
-  YYSYMBOL_FLOAT_NUMBER = 4,               /* FLOAT_NUMBER  */
-  YYSYMBOL_IDENTIFIER = 5,                 /* IDENTIFIER  */
-  YYSYMBOL_STRING_LITERAL = 6,             /* STRING_LITERAL  */
-  YYSYMBOL_INT = 7,                        /* INT  */
-  YYSYMBOL_FLOAT = 8,                      /* FLOAT  */
-  YYSYMBOL_VOID = 9,                       /* VOID  */
-  YYSYMBOL_IF = 10,                        /* IF  */
-  YYSYMBOL_ELSE = 11,                      /* ELSE  */
-  YYSYMBOL_WHILE = 12,                     /* WHILE  */
-  YYSYMBOL_FOR = 13,                       /* FOR  */
-  YYSYMBOL_RETURN = 14,                    /* RETURN  */
-  YYSYMBOL_PLUS = 15,                      /* PLUS  */
-  YYSYMBOL_MINUS = 16,                     /* MINUS  */
-  YYSYMBOL_TIMES = 17,                     /* TIMES  */
-  YYSYMBOL_DIVIDE = 18,                    /* DIVIDE  */
-  YYSYMBOL_ASSIGN = 19,                    /* ASSIGN  */
-  YYSYMBOL_EQ = 20,                        /* EQ  */
-  YYSYMBOL_NEQ = 21,                       /* NEQ  */
-  YYSYMBOL_LT = 22,                        /* LT  */
-  YYSYMBOL_GT = 23,                        /* GT  */
-  YYSYMBOL_LE = 24,                        /* LE  */
-  YYSYMBOL_GE = 25,                        /* GE  */
-  YYSYMBOL_LPAREN = 26,                    /* LPAREN  */
-  YYSYMBOL_RPAREN = 27,                    /* RPAREN  */
-  YYSYMBOL_LBRACE = 28,                    /* LBRACE  */
-  YYSYMBOL_RBRACE = 29,                    /* RBRACE  */
-  YYSYMBOL_SEMICOLON = 30,                 /* SEMICOLON  */
-  YYSYMBOL_COMMA = 31,                     /* COMMA  */
-  YYSYMBOL_OR = 32,                        /* OR  */
-  YYSYMBOL_AND = 33,                       /* AND  */
-  YYSYMBOL_UNARY_MINUS = 34,               /* UNARY_MINUS  */
-  YYSYMBOL_NOT = 35,                       /* NOT  */
-  YYSYMBOL_YYACCEPT = 36,                  /* $accept  */
-  YYSYMBOL_program = 37,                   /* program  */
-  YYSYMBOL_declaration_list = 38,          /* declaration_list  */
-  YYSYMBOL_declaration = 39,               /* declaration  */
-  YYSYMBOL_var_declaration = 40,           /* var_declaration  */
-  YYSYMBOL_type_specifier = 41,            /* type_specifier  */
-  YYSYMBOL_expression = 42,                /* expression  */
-  YYSYMBOL_additive_expression = 43,       /* additive_expression  */
-  YYSYMBOL_multiplicative_expression = 44, /* multiplicative_expression  */
-  YYSYMBOL_primary_expression = 45         /* primary_expression  */
+  YYSYMBOL_DEVICE = 3,                     /* DEVICE  */
+  YYSYMBOL_AS = 4,                         /* AS  */
+  YYSYMBOL_VAR = 5,                        /* VAR  */
+  YYSYMBOL_WHEN = 6,                       /* WHEN  */
+  YYSYMBOL_THEN = 7,                       /* THEN  */
+  YYSYMBOL_SET = 8,                        /* SET  */
+  YYSYMBOL_TO = 9,                         /* TO  */
+  YYSYMBOL_BETWEEN = 10,                   /* BETWEEN  */
+  YYSYMBOL_AND = 11,                       /* AND  */
+  YYSYMBOL_OR = 12,                        /* OR  */
+  YYSYMBOL_TIME = 13,                      /* TIME  */
+  YYSYMBOL_TEMPERATURE = 14,               /* TEMPERATURE  */
+  YYSYMBOL_DURATION = 15,                  /* DURATION  */
+  YYSYMBOL_BOOL0 = 16,                     /* BOOL0  */
+  YYSYMBOL_RULE = 17,                      /* RULE  */
+  YYSYMBOL_IF = 18,                        /* IF  */
+  YYSYMBOL_ELSE = 19,                      /* ELSE  */
+  YYSYMBOL_WHILE = 20,                     /* WHILE  */
+  YYSYMBOL_DO = 21,                        /* DO  */
+  YYSYMBOL_FOR = 22,                       /* FOR  */
+  YYSYMBOL_AFTER = 23,                     /* AFTER  */
+  YYSYMBOL_BEFORE = 24,                    /* BEFORE  */
+  YYSYMBOL_DAY = 25,                       /* DAY  */
+  YYSYMBOL_OF = 26,                        /* OF  */
+  YYSYMBOL_WEEK = 27,                      /* WEEK  */
+  YYSYMBOL_IN_TOKEN = 28,                  /* IN_TOKEN  */
+  YYSYMBOL_LIGHT = 29,                     /* LIGHT  */
+  YYSYMBOL_AIR_CONDITIONER = 30,           /* AIR_CONDITIONER  */
+  YYSYMBOL_WATER_HEATER = 31,              /* WATER_HEATER  */
+  YYSYMBOL_TELEVISION = 32,                /* TELEVISION  */
+  YYSYMBOL_WASHER = 33,                    /* WASHER  */
+  YYSYMBOL_FRIDGE = 34,                    /* FRIDGE  */
+  YYSYMBOL_ELECTRIC_FAN = 35,              /* ELECTRIC_FAN  */
+  YYSYMBOL_FALSE0 = 36,                    /* FALSE0  */
+  YYSYMBOL_TRUE0 = 37,                     /* TRUE0  */
+  YYSYMBOL_ON = 38,                        /* ON  */
+  YYSYMBOL_OFF = 39,                       /* OFF  */
+  YYSYMBOL_MON = 40,                       /* MON  */
+  YYSYMBOL_TUE = 41,                       /* TUE  */
+  YYSYMBOL_WED = 42,                       /* WED  */
+  YYSYMBOL_THU = 43,                       /* THU  */
+  YYSYMBOL_FRI = 44,                       /* FRI  */
+  YYSYMBOL_SAT = 45,                       /* SAT  */
+  YYSYMBOL_SUN = 46,                       /* SUN  */
+  YYSYMBOL_IDENTIFIER = 47,                /* IDENTIFIER  */
+  YYSYMBOL_STRING_LITERAL = 48,            /* STRING_LITERAL  */
+  YYSYMBOL_TIMEPOINT = 49,                 /* TIMEPOINT  */
+  YYSYMBOL_INT_NUMBER = 50,                /* INT_NUMBER  */
+  YYSYMBOL_FLOAT_NUMBER = 51,              /* FLOAT_NUMBER  */
+  YYSYMBOL_EQ = 52,                        /* EQ  */
+  YYSYMBOL_NEQ = 53,                       /* NEQ  */
+  YYSYMBOL_LT = 54,                        /* LT  */
+  YYSYMBOL_GT = 55,                        /* GT  */
+  YYSYMBOL_LE = 56,                        /* LE  */
+  YYSYMBOL_GE = 57,                        /* GE  */
+  YYSYMBOL_PLUS = 58,                      /* PLUS  */
+  YYSYMBOL_MINUS = 59,                     /* MINUS  */
+  YYSYMBOL_TIMES = 60,                     /* TIMES  */
+  YYSYMBOL_DIVIDE = 61,                    /* DIVIDE  */
+  YYSYMBOL_ASSIGN = 62,                    /* ASSIGN  */
+  YYSYMBOL_LPAREN = 63,                    /* LPAREN  */
+  YYSYMBOL_RPAREN = 64,                    /* RPAREN  */
+  YYSYMBOL_LBRACE = 65,                    /* LBRACE  */
+  YYSYMBOL_RBRACE = 66,                    /* RBRACE  */
+  YYSYMBOL_LBRACKET = 67,                  /* LBRACKET  */
+  YYSYMBOL_RBRACKET = 68,                  /* RBRACKET  */
+  YYSYMBOL_SEMICOLON = 69,                 /* SEMICOLON  */
+  YYSYMBOL_COMMA = 70,                     /* COMMA  */
+  YYSYMBOL_COLON = 71,                     /* COLON  */
+  YYSYMBOL_DOT = 72,                       /* DOT  */
+  YYSYMBOL_UNARY_MINUS = 73,               /* UNARY_MINUS  */
+  YYSYMBOL_NOT = 74,                       /* NOT  */
+  YYSYMBOL_YYACCEPT = 75,                  /* $accept  */
+  YYSYMBOL_program = 76,                   /* program  */
+  YYSYMBOL_deviceDeclarationList = 77,     /* deviceDeclarationList  */
+  YYSYMBOL_deviceDeclaration = 78,         /* deviceDeclaration  */
+  YYSYMBOL_deviceType = 79                 /* deviceType  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -514,21 +528,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  9
+#define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   32
+#define YYLAST   12
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  36
+#define YYNTOKENS  75
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  10
+#define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  24
+#define YYNRULES  12
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  38
+#define YYNSTATES  18
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   290
+#define YYMAXUTOK   329
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -571,16 +585,18 @@ static const yytype_int8 yytranslate[] =
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
+      55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
+      65,    66,    67,    68,    69,    70,    71,    72,    73,    74
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int16 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    97,    97,   106,   110,   121,   128,   132,   141,   144,
-     147,   231,   235,   239,   240,   245,   253,   254,   259,   267,
-     272,   277,   280,   283,   286
+       0,    80,    80,    82,    93,   100,   122,   123,   124,   125,
+     126,   127,   128
 };
 #endif
 
@@ -596,14 +612,18 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "INT_NUMBER",
-  "FLOAT_NUMBER", "IDENTIFIER", "STRING_LITERAL", "INT", "FLOAT", "VOID",
-  "IF", "ELSE", "WHILE", "FOR", "RETURN", "PLUS", "MINUS", "TIMES",
-  "DIVIDE", "ASSIGN", "EQ", "NEQ", "LT", "GT", "LE", "GE", "LPAREN",
-  "RPAREN", "LBRACE", "RBRACE", "SEMICOLON", "COMMA", "OR", "AND",
-  "UNARY_MINUS", "NOT", "$accept", "program", "declaration_list",
-  "declaration", "var_declaration", "type_specifier", "expression",
-  "additive_expression", "multiplicative_expression", "primary_expression", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "DEVICE", "AS", "VAR",
+  "WHEN", "THEN", "SET", "TO", "BETWEEN", "AND", "OR", "TIME",
+  "TEMPERATURE", "DURATION", "BOOL0", "RULE", "IF", "ELSE", "WHILE", "DO",
+  "FOR", "AFTER", "BEFORE", "DAY", "OF", "WEEK", "IN_TOKEN", "LIGHT",
+  "AIR_CONDITIONER", "WATER_HEATER", "TELEVISION", "WASHER", "FRIDGE",
+  "ELECTRIC_FAN", "FALSE0", "TRUE0", "ON", "OFF", "MON", "TUE", "WED",
+  "THU", "FRI", "SAT", "SUN", "IDENTIFIER", "STRING_LITERAL", "TIMEPOINT",
+  "INT_NUMBER", "FLOAT_NUMBER", "EQ", "NEQ", "LT", "GT", "LE", "GE",
+  "PLUS", "MINUS", "TIMES", "DIVIDE", "ASSIGN", "LPAREN", "RPAREN",
+  "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "SEMICOLON", "COMMA",
+  "COLON", "DOT", "UNARY_MINUS", "NOT", "$accept", "program",
+  "deviceDeclarationList", "deviceDeclaration", "deviceType", YY_NULLPTR
 };
 
 static const char *
@@ -613,7 +633,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-17)
+#define YYPACT_NINF (-39)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -627,10 +647,8 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      17,   -17,   -17,   -17,     9,    17,   -17,   -16,    13,   -17,
-     -17,   -17,     0,    -3,   -17,   -17,     3,   -17,     1,    -3,
-     -17,    -4,    11,   -17,    -3,   -17,   -17,   -11,     1,     1,
-       1,     1,   -17,   -17,    11,    11,   -17,   -17
+       4,   -29,     8,     4,   -39,   -39,   -39,   -39,   -39,   -39,
+     -39,   -39,   -38,   -39,   -39,     6,   -37,   -39
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -638,22 +656,20 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     8,     9,    10,     0,     2,     3,     0,     0,     1,
-       4,     5,     6,     0,    19,    20,    21,    22,     0,     0,
-       7,    12,    13,    16,     0,    21,    24,     0,     0,     0,
-       0,     0,    11,    23,    14,    15,    17,    18
+       0,     0,     0,     2,     4,     6,     7,     8,     9,    10,
+      11,    12,     0,     1,     3,     0,     0,     5
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -17,   -17,   -17,    27,   -17,   -17,    -9,   -17,     2,   -10
+     -39,   -39,   -39,     9,   -39
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,     5,     6,     7,     8,    20,    21,    22,    23
+       0,     2,     3,     4,    12
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -661,44 +677,36 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      14,    15,    16,    17,    14,    15,    25,    17,    26,     9,
-      27,    28,    29,    18,    11,    32,    33,    18,    12,    13,
-      36,    37,    24,    19,     1,     2,     3,    19,    30,    31,
-      34,    35,    10
+       5,     6,     7,     8,     9,    10,    11,     1,    13,    15,
+      16,    17,    14
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     4,     5,     6,     3,     4,     5,     6,    18,     0,
-      19,    15,    16,    16,    30,    24,    27,    16,     5,    19,
-      30,    31,    19,    26,     7,     8,     9,    26,    17,    18,
-      28,    29,     5
+      29,    30,    31,    32,    33,    34,    35,     3,     0,    47,
+       4,    48,     3
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     7,     8,     9,    37,    38,    39,    40,    41,     0,
-      39,    30,     5,    19,     3,     4,     5,     6,    16,    26,
-      42,    43,    44,    45,    19,     5,    45,    42,    15,    16,
-      17,    18,    42,    27,    44,    44,    45,    45
+       0,     3,    76,    77,    78,    29,    30,    31,    32,    33,
+      34,    35,    79,     0,    78,    47,     4,    48
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    36,    37,    38,    38,    39,    40,    40,    41,    41,
-      41,    42,    42,    43,    43,    43,    44,    44,    44,    45,
-      45,    45,    45,    45,    45
+       0,    75,    76,    77,    77,    78,    79,    79,    79,    79,
+      79,    79,    79
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1,     2,     2,     2,     4,     1,     1,
-       1,     3,     1,     1,     3,     3,     1,     3,     3,     1,
-       1,     1,     1,     3,     2
+       0,     2,     1,     2,     1,     5,     1,     1,     1,     1,
+       1,     1,     1
 };
 
 
@@ -1161,192 +1169,106 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* program: declaration_list  */
-#line 97 "parser.y"
+  case 2: /* program: deviceDeclarationList  */
+#line 80 "parser\\parser.y"
+                               { ast_root = (yyvsp[0].ast_node); }
+#line 1176 "parser\\parser.tab.c"
+    break;
+
+  case 3: /* deviceDeclarationList: deviceDeclarationList deviceDeclaration  */
+#line 83 "parser\\parser.y"
                      {
-        ast_root = (yyvsp[0].ast_node);
-        printf("语法分析成功！\n");
-        (yyval.ast_node) = (yyvsp[0].ast_node);
-    }
-#line 1172 "parser.tab.c"
+                         /* 构建 DeviceDeclarationList 节点，结构：
+                            DeviceDeclarationList
+                            ├─ DeviceDeclarationList (子节点，由前一个 deviceDeclarationList 产生式返回的 AST 节点)
+                            └─ DeviceDeclaration (子节点，由 deviceDeclaration 产生式返回的 AST 节点)
+                         */
+                         (yyval.ast_node) = create_node("DeviceDeclarationList", NULL);
+                         add_child((yyval.ast_node), (yyvsp[-1].ast_node));  // 前一个设备声明列表
+                         add_child((yyval.ast_node), (yyvsp[0].ast_node));  // 当前设备声明
+                     }
+#line 1191 "parser\\parser.tab.c"
     break;
 
-  case 3: /* declaration_list: declaration  */
-#line 106 "parser.y"
-                {
-        (yyval.ast_node) = create_node("DECLARATION_LIST", NULL);
-        (yyval.ast_node)->left = (yyvsp[0].ast_node);
-    }
-#line 1181 "parser.tab.c"
+  case 4: /* deviceDeclarationList: deviceDeclaration  */
+#line 94 "parser\\parser.y"
+                     {
+                         /* 单个设备声明时，直接返回该设备声明的 AST 节点 */
+                         (yyval.ast_node) = create_node("DeviceDeclarationList", NULL);
+                         add_child((yyval.ast_node), (yyvsp[0].ast_node));
+                     }
+#line 1201 "parser\\parser.tab.c"
     break;
 
-  case 4: /* declaration_list: declaration_list declaration  */
-#line 110 "parser.y"
-                                   {
-        // 将新声明添加到列表末尾
-        ASTNode *current = (yyvsp[-1].ast_node);
-        while (current->right) current = current->right;
-        current->right = (yyvsp[0].ast_node);
-        (yyval.ast_node) = (yyvsp[-1].ast_node);
-    }
-#line 1193 "parser.tab.c"
-    break;
-
-  case 5: /* declaration: var_declaration SEMICOLON  */
-#line 121 "parser.y"
-                              {
-        (yyval.ast_node) = (yyvsp[-1].ast_node);
-    }
-#line 1201 "parser.tab.c"
-    break;
-
-  case 6: /* var_declaration: type_specifier IDENTIFIER  */
-#line 128 "parser.y"
-                              {
-        (yyval.ast_node) = create_node("VAR_DECL", (yyvsp[0].str_val));
-        (yyval.ast_node)->left = (yyvsp[-1].ast_node);  // 类型作为左子节点
-    }
-#line 1210 "parser.tab.c"
-    break;
-
-  case 7: /* var_declaration: type_specifier IDENTIFIER ASSIGN expression  */
-#line 132 "parser.y"
-                                                  {
-        (yyval.ast_node) = create_node("VAR_DECL_WITH_INIT", (yyvsp[-2].str_val));
-        (yyval.ast_node)->left = (yyvsp[-3].ast_node);      // 类型
-        (yyval.ast_node)->right = (yyvsp[0].ast_node);     // 初始值
-    }
-#line 1220 "parser.tab.c"
-    break;
-
-  case 8: /* type_specifier: INT  */
-#line 141 "parser.y"
-        {
-        (yyval.ast_node) = create_node("TYPE", "int");
-    }
-#line 1228 "parser.tab.c"
-    break;
-
-  case 9: /* type_specifier: FLOAT  */
-#line 144 "parser.y"
-            {
-        (yyval.ast_node) = create_node("TYPE", "float");
-    }
-#line 1236 "parser.tab.c"
-    break;
-
-  case 10: /* type_specifier: VOID  */
-#line 147 "parser.y"
-           {
-        (yyval.ast_node) = create_node("TYPE", "void");
-    }
-#line 1244 "parser.tab.c"
-    break;
-
-  case 11: /* expression: IDENTIFIER ASSIGN expression  */
-#line 231 "parser.y"
-                                 {
-        (yyval.ast_node) = create_node("ASSIGN", (yyvsp[-2].str_val));
-        (yyval.ast_node)->left = (yyvsp[0].ast_node);
-    }
-#line 1253 "parser.tab.c"
-    break;
-
-  case 14: /* additive_expression: additive_expression PLUS multiplicative_expression  */
-#line 240 "parser.y"
-                                                         {
-        (yyval.ast_node) = create_node("BIN_OP", "+");
-        (yyval.ast_node)->left = (yyvsp[-2].ast_node);
-        (yyval.ast_node)->right = (yyvsp[0].ast_node);
-    }
-#line 1263 "parser.tab.c"
-    break;
-
-  case 15: /* additive_expression: additive_expression MINUS multiplicative_expression  */
-#line 245 "parser.y"
-                                                          {
-        (yyval.ast_node) = create_node("BIN_OP", "-");
-        (yyval.ast_node)->left = (yyvsp[-2].ast_node);
-        (yyval.ast_node)->right = (yyvsp[0].ast_node);
-    }
-#line 1273 "parser.tab.c"
-    break;
-
-  case 17: /* multiplicative_expression: multiplicative_expression TIMES primary_expression  */
-#line 254 "parser.y"
-                                                         {
-        (yyval.ast_node) = create_node("BIN_OP", "*");
-        (yyval.ast_node)->left = (yyvsp[-2].ast_node);
-        (yyval.ast_node)->right = (yyvsp[0].ast_node);
-    }
-#line 1283 "parser.tab.c"
-    break;
-
-  case 18: /* multiplicative_expression: multiplicative_expression DIVIDE primary_expression  */
-#line 259 "parser.y"
-                                                          {
-        (yyval.ast_node) = create_node("BIN_OP", "/");
-        (yyval.ast_node)->left = (yyvsp[-2].ast_node);
-        (yyval.ast_node)->right = (yyvsp[0].ast_node);
-    }
-#line 1293 "parser.tab.c"
-    break;
-
-  case 19: /* primary_expression: INT_NUMBER  */
-#line 267 "parser.y"
-               {
-        char buffer[20];
-        sprintf(buffer, "%d", (yyvsp[0].int_val));
-        (yyval.ast_node) = create_node("INT_CONST", buffer);
-    }
-#line 1303 "parser.tab.c"
-    break;
-
-  case 20: /* primary_expression: FLOAT_NUMBER  */
-#line 272 "parser.y"
-                   {
-        char buffer[30];
-        sprintf(buffer, "%f", (yyvsp[0].float_val));
-        (yyval.ast_node) = create_node("FLOAT_CONST", buffer);
-    }
-#line 1313 "parser.tab.c"
-    break;
-
-  case 21: /* primary_expression: IDENTIFIER  */
-#line 277 "parser.y"
+  case 5: /* deviceDeclaration: DEVICE deviceType IDENTIFIER AS STRING_LITERAL  */
+#line 101 "parser\\parser.y"
                  {
-        (yyval.ast_node) = create_node("IDENTIFIER", (yyvsp[0].str_val));
-    }
-#line 1321 "parser.tab.c"
+                     /* 构建 DeviceDeclaration 节点，结构：
+                        DeviceDeclaration
+                        ├─ DEVICE (终结符)
+                        ├─ DeviceType (子节点，由 deviceType 产生式返回的 AST 节点)
+                        ├─ Identifier (终结符)
+                        ├─ AS (终结符)
+                        └─ StringLiteral (终结符)
+                     */
+                     (yyval.ast_node) = create_node("DeviceDeclaration", NULL);
+                     /* 把终结符 DEVICE 也作为叶子节点加入 */
+                     add_child((yyval.ast_node), create_node("DEVICE", (yyvsp[-4].str_val)));
+                     /* deviceType 已经返回 AST 节点 */
+                     add_child((yyval.ast_node), (yyvsp[-3].ast_node));
+                     /* 标识符、AS、字符串作为叶子节点 */
+                     add_child((yyval.ast_node), create_node("Identifier", (yyvsp[-2].str_val)));
+                     add_child((yyval.ast_node), create_node("AS", (yyvsp[-1].str_val)));
+                     add_child((yyval.ast_node), create_node("StringLiteral", (yyvsp[0].str_val)));
+                     //print_ast_tree($$);  // 打印当前设备声明的 AST
+                 }
+#line 1226 "parser\\parser.tab.c"
     break;
 
-  case 22: /* primary_expression: STRING_LITERAL  */
-#line 280 "parser.y"
-                     {
-        (yyval.ast_node) = create_node("STRING_LITERAL", (yyvsp[0].str_val));
-    }
-#line 1329 "parser.tab.c"
+  case 6: /* deviceType: LIGHT  */
+#line 122 "parser\\parser.y"
+                            { (yyval.ast_node) = create_node("DeviceType", (yyvsp[0].str_val)); }
+#line 1232 "parser\\parser.tab.c"
     break;
 
-  case 23: /* primary_expression: LPAREN expression RPAREN  */
-#line 283 "parser.y"
-                               {
-        (yyval.ast_node) = (yyvsp[-1].ast_node);
-    }
-#line 1337 "parser.tab.c"
+  case 7: /* deviceType: AIR_CONDITIONER  */
+#line 123 "parser\\parser.y"
+                             { (yyval.ast_node) = create_node("DeviceType", (yyvsp[0].str_val)); }
+#line 1238 "parser\\parser.tab.c"
     break;
 
-  case 24: /* primary_expression: MINUS primary_expression  */
-#line 286 "parser.y"
-                                                 {
-        (yyval.ast_node) = create_node("UNARY_OP", "-");
-        (yyval.ast_node)->left = (yyvsp[0].ast_node);
-    }
-#line 1346 "parser.tab.c"
+  case 8: /* deviceType: WATER_HEATER  */
+#line 124 "parser\\parser.y"
+                             { (yyval.ast_node) = create_node("DeviceType", (yyvsp[0].str_val)); }
+#line 1244 "parser\\parser.tab.c"
+    break;
+
+  case 9: /* deviceType: TELEVISION  */
+#line 125 "parser\\parser.y"
+                             { (yyval.ast_node) = create_node("DeviceType", (yyvsp[0].str_val)); }
+#line 1250 "parser\\parser.tab.c"
+    break;
+
+  case 10: /* deviceType: WASHER  */
+#line 126 "parser\\parser.y"
+                             { (yyval.ast_node) = create_node("DeviceType", (yyvsp[0].str_val)); }
+#line 1256 "parser\\parser.tab.c"
+    break;
+
+  case 11: /* deviceType: FRIDGE  */
+#line 127 "parser\\parser.y"
+                             { (yyval.ast_node) = create_node("DeviceType", (yyvsp[0].str_val)); }
+#line 1262 "parser\\parser.tab.c"
+    break;
+
+  case 12: /* deviceType: ELECTRIC_FAN  */
+#line 128 "parser\\parser.y"
+                             { (yyval.ast_node) = create_node("DeviceType", (yyvsp[0].str_val)); }
+#line 1268 "parser\\parser.tab.c"
     break;
 
 
-#line 1350 "parser.tab.c"
+#line 1272 "parser\\parser.tab.c"
 
       default: break;
     }
@@ -1539,10 +1461,15 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 292 "parser.y"
+#line 133 "parser\\parser.y"
 
 
 int main(int argc, char **argv) {
+    /* 在 Windows 下设置控制台为 UTF-8，便于显示中文 */
+#ifdef _WIN32
+    SetConsoleOutputCP(65001);
+#endif
+    /* 优先使用命令行指定的输入文件；否则使用仓库根下的 D:\\input.txt 作为默认输入 */
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
         if (!yyin) {
@@ -1550,15 +1477,19 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else {
-        yyin = stdin;
-        printf("请输入代码，以 Ctrl+Z (Windows) 结束:\n");
+        const char *default_path = "D:\\input.txt";
+        yyin = fopen(default_path, "r");
+        if (!yyin) {
+            fprintf(stderr, "无法打开默认输入文件: %s\n", default_path);
+            return 1;
+        }
     }
     
     printf("开始语法分析...\n");
     if (yyparse() == 0) {
         printf("\n=== 抽象语法树 (AST) ===\n");
         if (ast_root) {
-            print_ast(ast_root, 0);
+            print_ast_tree(ast_root);
         } else {
             printf("AST 为空\n");
         }

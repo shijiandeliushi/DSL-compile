@@ -135,3 +135,12 @@ int main(){
    + 修改好lexer.l文件后，在lexer.l文件所在目录下运行`win_flex lexer.l`，会生成lex.yy.c文件，然后运行`gcc lex.yy.c -o lex.yy.exe`生成lex.yy.exe文件，然后运行`lex.yy.exe`即可得到结果。
    + parser目录是语法分析，暂时不管。
    + 还可能有些我没遇到的问题，可以随时来问我。
+
+## lexer.l文件修改
+ ### 12.17晚上修改内容
+  + 将`LIGHT`、`AIR-CONDITIONER`、`WATER-HEATER`、`TELEVISION`、`WASHER`、`FRIDGE`、`ELECTRIC-FAN`的类型定义为关键字。
+  + 所有的以`"`开头和结尾的单词都被识别为string 类型，除了string（字符串）类型，其余源代码均不使用`"`。
+  + 所有变量的定义不允许使用连字符`-`，可以使用下划线`_`。
+  + 将`true`、`false`定义为boolean类型，将`on`、`off`定义为state类型，将`mon`、`tue`、`wed`、`thu`、`fri`、`sat`、`sun`周日期表示定义为date类型，在语句`day of week in [...]`中，将`week`,`in`定义为关键字。
+  + 以上改动的词法识别测试均已成功
+  + 变量声明只能用identify类型，不能用其他类型
