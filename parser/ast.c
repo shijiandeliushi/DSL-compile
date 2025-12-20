@@ -6,15 +6,68 @@
 
 
 
-// 创建 AST 节点，创建AST节点，type为节点类型，value为节点值
-ASTNode* create_node(char *type, char *value) {
+// 创建 AST 节点，type为节点类型
+ASTNode* create_node(char *type) {
     ASTNode *node = (ASTNode*)malloc(sizeof(ASTNode));
     node->type = strdup(type);
-    node->value = value ? strdup(value) : NULL;
+    node->value_type = VALUE_TYPE_NONE;
+    memset(&node->value, 0, sizeof(NodeValue));
     node->left = node->right = NULL;
     node->children = NULL;
     node->child_count = 0;
     return node;
+}
+
+// 设置节点的值（字符串类型）
+void set_node_string_value(ASTNode *node, char *value) {
+    if (node == NULL) return;
+    
+    // 如果之前是字符串类型，释放内存
+    if (node->value_type == VALUE_TYPE_STRING) {
+        free(node->value.string);
+    }
+    
+    node->value_type = VALUE_TYPE_STRING;
+    node->value.string = value ? strdup(value) : NULL;
+}
+
+// 设置节点的值（整数类型）
+void set_node_int_value(ASTNode *node, int value) {
+    if (node == NULL) return;
+    
+    // 如果之前是字符串类型，释放内存
+    if (node->value_type == VALUE_TYPE_STRING) {
+        free(node->value.string);
+    }
+    
+    node->value_type = VALUE_TYPE_INT;
+    node->value.integer = value;
+}
+
+// 设置节点的值（浮点数类型）
+void set_node_float_value(ASTNode *node, float value) {
+    if (node == NULL) return;
+    
+    // 如果之前是字符串类型，释放内存
+    if (node->value_type == VALUE_TYPE_STRING) {
+        free(node->value.string);
+    }
+    
+    node->value_type = VALUE_TYPE_FLOAT;
+    node->value.floating = value;
+}
+
+// 设置节点的值（字符类型）
+void set_node_char_value(ASTNode *node, char value) {
+    if (node == NULL) return;
+    
+    // 如果之前是字符串类型，释放内存
+    if (node->value_type == VALUE_TYPE_STRING) {
+        free(node->value.string);
+    }
+    
+    node->value_type = VALUE_TYPE_CHAR;
+    node->value.character = value;
 }
 
 // 向父节点添加一个子节点（动态扩展 children 数组）
@@ -35,7 +88,25 @@ static void print_ast_node(const ASTNode *node, const char *prefix, int is_last)
     printf("%s", prefix);
     printf(is_last ? "└─" : "├─");
     printf("%s", node->type);
-    if (node->value) printf(": %s", node->value);
+    
+    // 根据值类型打印不同的值
+    switch (node->value_type) {
+        case VALUE_TYPE_STRING:
+            if (node->value.string) printf(": %s", node->value.string);
+            break;
+        case VALUE_TYPE_INT:
+            printf(": %d", node->value.integer);
+            break;
+        case VALUE_TYPE_FLOAT:
+            printf(": %f", node->value.floating);
+            break;
+        case VALUE_TYPE_CHAR:
+            printf(": '%c'", node->value.character);
+            break;
+        case VALUE_TYPE_NONE:
+            // 无值，不打印
+            break;
+    }
     printf("\n");
 
     // 为子节点构造新的前缀
@@ -63,7 +134,25 @@ void print_ast_tree(ASTNode *root) {
     if (!root) return;
     // 根节点单独打印（没有前缀），随后递归打印子树
     printf("%s", root->type);
-    if (root->value) printf(": %s", root->value);
+    
+    // 根据值类型打印不同的值
+    switch (root->value_type) {
+        case VALUE_TYPE_STRING:
+            if (root->value.string) printf(": %s", root->value.string);
+            break;
+        case VALUE_TYPE_INT:
+            printf(": %d", root->value.integer);
+            break;
+        case VALUE_TYPE_FLOAT:
+            printf(": %f", root->value.floating);
+            break;
+        case VALUE_TYPE_CHAR:
+            printf(": '%c'", root->value.character);
+            break;
+        case VALUE_TYPE_NONE:
+            // 无值，不打印
+            break;
+    }
     printf("\n");
 
     if (root->child_count > 0 && root->children) {

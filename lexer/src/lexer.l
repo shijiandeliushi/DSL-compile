@@ -80,6 +80,8 @@ WHITESPACE      [ \t\r]+
 "temperature"   { yylval.str_val = copy_string(yytext); return TEMPERATURE; }
 "duration"      { yylval.str_val = copy_string(yytext); return DURATION; }
 "bool"          { yylval.str_val = copy_string(yytext); return BOOL0; }
+"int"           {yylval.str_val = copy_string(yytext); return INT0;}
+"float"         {yylval.str_val = copy_string(yytext); return FLOAT0;}
 "rule"          { yylval.str_val = copy_string(yytext); return RULE; }
 "if"            { yylval.str_val = copy_string(yytext); return IF; }
 "else"          { yylval.str_val = copy_string(yytext); return ELSE; }

@@ -74,64 +74,66 @@ extern int yydebug;
     TEMPERATURE = 269,             /* TEMPERATURE  */
     DURATION = 270,                /* DURATION  */
     BOOL0 = 271,                   /* BOOL0  */
-    RULE = 272,                    /* RULE  */
-    IF = 273,                      /* IF  */
-    ELSE = 274,                    /* ELSE  */
-    WHILE = 275,                   /* WHILE  */
-    DO = 276,                      /* DO  */
-    FOR = 277,                     /* FOR  */
-    AFTER = 278,                   /* AFTER  */
-    BEFORE = 279,                  /* BEFORE  */
-    DAY = 280,                     /* DAY  */
-    OF = 281,                      /* OF  */
-    WEEK = 282,                    /* WEEK  */
-    IN_TOKEN = 283,                /* IN_TOKEN  */
-    LIGHT = 284,                   /* LIGHT  */
-    AIR_CONDITIONER = 285,         /* AIR_CONDITIONER  */
-    WATER_HEATER = 286,            /* WATER_HEATER  */
-    TELEVISION = 287,              /* TELEVISION  */
-    WASHER = 288,                  /* WASHER  */
-    FRIDGE = 289,                  /* FRIDGE  */
-    ELECTRIC_FAN = 290,            /* ELECTRIC_FAN  */
-    FALSE0 = 291,                  /* FALSE0  */
-    TRUE0 = 292,                   /* TRUE0  */
-    ON = 293,                      /* ON  */
-    OFF = 294,                     /* OFF  */
-    MON = 295,                     /* MON  */
-    TUE = 296,                     /* TUE  */
-    WED = 297,                     /* WED  */
-    THU = 298,                     /* THU  */
-    FRI = 299,                     /* FRI  */
-    SAT = 300,                     /* SAT  */
-    SUN = 301,                     /* SUN  */
-    IDENTIFIER = 302,              /* IDENTIFIER  */
-    STRING_LITERAL = 303,          /* STRING_LITERAL  */
-    TIMEPOINT = 304,               /* TIMEPOINT  */
-    INT_NUMBER = 305,              /* INT_NUMBER  */
-    FLOAT_NUMBER = 306,            /* FLOAT_NUMBER  */
-    EQ = 307,                      /* EQ  */
-    NEQ = 308,                     /* NEQ  */
-    LT = 309,                      /* LT  */
-    GT = 310,                      /* GT  */
-    LE = 311,                      /* LE  */
-    GE = 312,                      /* GE  */
-    PLUS = 313,                    /* PLUS  */
-    MINUS = 314,                   /* MINUS  */
-    TIMES = 315,                   /* TIMES  */
-    DIVIDE = 316,                  /* DIVIDE  */
-    ASSIGN = 317,                  /* ASSIGN  */
-    LPAREN = 318,                  /* LPAREN  */
-    RPAREN = 319,                  /* RPAREN  */
-    LBRACE = 320,                  /* LBRACE  */
-    RBRACE = 321,                  /* RBRACE  */
-    LBRACKET = 322,                /* LBRACKET  */
-    RBRACKET = 323,                /* RBRACKET  */
-    SEMICOLON = 324,               /* SEMICOLON  */
-    COMMA = 325,                   /* COMMA  */
-    COLON = 326,                   /* COLON  */
-    DOT = 327,                     /* DOT  */
-    UNARY_MINUS = 328,             /* UNARY_MINUS  */
-    NOT = 329                      /* NOT  */
+    FLOAT0 = 272,                  /* FLOAT0  */
+    INT0 = 273,                    /* INT0  */
+    RULE = 274,                    /* RULE  */
+    IF = 275,                      /* IF  */
+    ELSE = 276,                    /* ELSE  */
+    WHILE = 277,                   /* WHILE  */
+    DO = 278,                      /* DO  */
+    FOR = 279,                     /* FOR  */
+    AFTER = 280,                   /* AFTER  */
+    BEFORE = 281,                  /* BEFORE  */
+    DAY = 282,                     /* DAY  */
+    OF = 283,                      /* OF  */
+    WEEK = 284,                    /* WEEK  */
+    IN_TOKEN = 285,                /* IN_TOKEN  */
+    LIGHT = 286,                   /* LIGHT  */
+    AIR_CONDITIONER = 287,         /* AIR_CONDITIONER  */
+    WATER_HEATER = 288,            /* WATER_HEATER  */
+    TELEVISION = 289,              /* TELEVISION  */
+    WASHER = 290,                  /* WASHER  */
+    FRIDGE = 291,                  /* FRIDGE  */
+    ELECTRIC_FAN = 292,            /* ELECTRIC_FAN  */
+    FALSE0 = 293,                  /* FALSE0  */
+    TRUE0 = 294,                   /* TRUE0  */
+    ON = 295,                      /* ON  */
+    OFF = 296,                     /* OFF  */
+    MON = 297,                     /* MON  */
+    TUE = 298,                     /* TUE  */
+    WED = 299,                     /* WED  */
+    THU = 300,                     /* THU  */
+    FRI = 301,                     /* FRI  */
+    SAT = 302,                     /* SAT  */
+    SUN = 303,                     /* SUN  */
+    IDENTIFIER = 304,              /* IDENTIFIER  */
+    STRING_LITERAL = 305,          /* STRING_LITERAL  */
+    TIMEPOINT = 306,               /* TIMEPOINT  */
+    INT_NUMBER = 307,              /* INT_NUMBER  */
+    FLOAT_NUMBER = 308,            /* FLOAT_NUMBER  */
+    EQ = 309,                      /* EQ  */
+    NEQ = 310,                     /* NEQ  */
+    LT = 311,                      /* LT  */
+    GT = 312,                      /* GT  */
+    LE = 313,                      /* LE  */
+    GE = 314,                      /* GE  */
+    PLUS = 315,                    /* PLUS  */
+    MINUS = 316,                   /* MINUS  */
+    TIMES = 317,                   /* TIMES  */
+    DIVIDE = 318,                  /* DIVIDE  */
+    ASSIGN = 319,                  /* ASSIGN  */
+    LPAREN = 320,                  /* LPAREN  */
+    RPAREN = 321,                  /* RPAREN  */
+    LBRACE = 322,                  /* LBRACE  */
+    RBRACE = 323,                  /* RBRACE  */
+    LBRACKET = 324,                /* LBRACKET  */
+    RBRACKET = 325,                /* RBRACKET  */
+    SEMICOLON = 326,               /* SEMICOLON  */
+    COMMA = 327,                   /* COMMA  */
+    COLON = 328,                   /* COLON  */
+    DOT = 329,                     /* DOT  */
+    UNARY_MINUS = 330,             /* UNARY_MINUS  */
+    NOT = 331                      /* NOT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -147,7 +149,7 @@ union YYSTYPE
     char *str_val;
     ASTNode *ast_node;
 
-#line 151 "parser\\parser.tab.h"
+#line 153 "parser\\parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

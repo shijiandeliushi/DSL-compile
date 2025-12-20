@@ -41,7 +41,7 @@ ASTNode *ast_root = NULL;
 }
 
 /* 终结符（token）声明：把 lexer 中可能返回的 token 列出并关联 union 字段（若有） */
-%token <str_val> DEVICE AS VAR WHEN THEN SET TO BETWEEN AND OR TIME TEMPERATURE DURATION BOOL0 RULE
+%token <str_val> DEVICE AS VAR WHEN THEN SET TO BETWEEN AND OR TIME TEMPERATURE DURATION BOOL0 FLOAT0 INT0 RULE
 %token IF ELSE WHILE DO FOR AFTER BEFORE DAY OF WEEK IN_TOKEN
 %token <str_val> LIGHT AIR_CONDITIONER WATER_HEATER TELEVISION WASHER FRIDGE ELECTRIC_FAN
 %token <str_val> FALSE0 TRUE0 ON OFF
@@ -58,6 +58,8 @@ ASTNode *ast_root = NULL;
 
 /* 声明非终结符的类型 */
 %type <ast_node> program deviceDeclarationList deviceDeclaration deviceType
+%type <ast_node> variableDeclarationList variableDeclaration valueType idnetifierList 
+%type <ast_node> variableAssignmentList variableAssignment expression primary
 
 
 
@@ -77,8 +79,14 @@ ASTNode *ast_root = NULL;
 %%
 /* 语法规则 */
 //字母全部大写的终结符，由词法分析器yylex()返回的，小写字母开头的时非终结符
-program: deviceDeclarationList { ast_root = $1; }
+program: deviceDeclarationList variableDeclarationList variableAssignmentList { ast_root = create_node("Program"); 
+                                                    add_child(ast_root, $1);
+                                                    add_child(ast_root, $2);
+                                                    add_child(ast_root, $3);
+                                                  }
 
+
+//设备声明部分
 deviceDeclarationList: deviceDeclarationList deviceDeclaration
                      {
                          /* 构建 DeviceDeclarationList 节点，结构：
@@ -86,14 +94,14 @@ deviceDeclarationList: deviceDeclarationList deviceDeclaration
                             ├─ DeviceDeclarationList (子节点，由前一个 deviceDeclarationList 产生式返回的 AST 节点)
                             └─ DeviceDeclaration (子节点，由 deviceDeclaration 产生式返回的 AST 节点)
                          */
-                         $$ = create_node("DeviceDeclarationList", NULL);
+                         $$ = create_node("DeviceDeclarationList");
                          add_child($$, $1);  // 前一个设备声明列表
                          add_child($$, $2);  // 当前设备声明
                      }
                    | deviceDeclaration
                      {
                          /* 单个设备声明时，直接返回该设备声明的 AST 节点 */
-                         $$ = create_node("DeviceDeclarationList", NULL);
+                         $$ = create_node("DeviceDeclarationList");
                          add_child($$, $1);
                      }
                    ;
@@ -107,28 +115,109 @@ deviceDeclaration: DEVICE deviceType IDENTIFIER AS STRING_LITERAL
                         ├─ AS (终结符)
                         └─ StringLiteral (终结符)
                      */
-                     $$ = create_node("DeviceDeclaration", NULL);
+                     $$ = create_node("DeviceDeclaration");
                      /* 把终结符 DEVICE 也作为叶子节点加入 */
-                     add_child($$, create_node("DEVICE", $1));
+                     { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
                      /* deviceType 已经返回 AST 节点 */
                      add_child($$, $2);
                      /* 标识符、AS、字符串作为叶子节点 */
-                     add_child($$, create_node("Identifier", $3));
-                     add_child($$, create_node("AS", $4));
-                     add_child($$, create_node("StringLiteral", $5));
+                     { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $3); add_child($$, node); }
+                     { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $4); add_child($$, node); }
+                     { ASTNode *node = create_node("StringLiteral"); set_node_string_value(node, $5); add_child($$, node); }
                      //print_ast_tree($$);  // 打印当前设备声明的 AST
                  }
 
-deviceType: LIGHT           { $$ = create_node("DeviceType", $1); }
-          | AIR_CONDITIONER  { $$ = create_node("DeviceType", $1); }
-          | WATER_HEATER     { $$ = create_node("DeviceType", $1); }
-          | TELEVISION       { $$ = create_node("DeviceType", $1); }
-          | WASHER           { $$ = create_node("DeviceType", $1); }
-          | FRIDGE           { $$ = create_node("DeviceType", $1); }
-          | ELECTRIC_FAN     { $$ = create_node("DeviceType", $1); }
+deviceType: LIGHT           { $$ = create_node("DeviceType"); set_node_string_value($$, $1); }
+          | AIR_CONDITIONER  { $$ = create_node("DeviceType"); set_node_string_value($$, $1); }
+          | WATER_HEATER     { $$ = create_node("DeviceType"); set_node_string_value($$, $1); }
+          | TELEVISION       { $$ = create_node("DeviceType"); set_node_string_value($$, $1); }
+          | WASHER           { $$ = create_node("DeviceType"); set_node_string_value($$, $1); }
+          | FRIDGE           { $$ = create_node("DeviceType"); set_node_string_value($$, $1); }
+          | ELECTRIC_FAN     { $$ = create_node("DeviceType"); set_node_string_value($$, $1); }
           ;
 
 
+//变量声明部分
+variableDeclarationList: variableDeclarationList variableDeclaration
+                     {
+                         /* 构建 VariableDeclarationList 节点，结构：
+                            VariableDeclarationList
+                            ├─ VariableDeclarationList (子节点，由前一个 variableDeclarationList 产生式返回的 AST 节点)
+                            └─ VariableDeclaration (子节点，由 variableDeclaration 产生式返回的 AST 节点)
+                         */
+                         $$ = create_node("VariableDeclarationList");
+                         add_child($$, $1);  // 前一个变量声明列表
+                         add_child($$, $2);  // 当前变量声明
+                     }
+                   | variableDeclaration
+                     {
+                         /* 单个变量声明时，直接返回该变量声明的 AST 节点 */
+                         $$ = create_node("VariableDeclarationList");
+                         add_child($$, $1);
+                     }
+                   ;
+variableDeclaration: VAR valueType idnetifierList SEMICOLON
+                   {$$ = create_node("varibleDeclaration");
+                   { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+                   add_child($$, $2);
+                   add_child($$, $3);
+                   { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }}
+
+//valueType是关键字
+valueType:TIME    { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
+        | TEMPERATURE  { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
+        | DURATION    { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
+        | BOOL0         { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
+        | FLOAT0        { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
+        | INT0          { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
+        ;
+
+idnetifierList:idnetifierList COMMA IDENTIFIER {$$ = create_node("IdentifierList");
+                                                add_child($$, $1);
+                                                { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $2); add_child($$, node); }
+                                                { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $3); add_child($$, node); }}
+                | IDENTIFIER  {$$ = create_node("IdentifierList");
+                                { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $1); add_child($$, node); }}
+                ;
+
+//变量赋值部分
+variableAssignmentList: variableAssignmentList variableAssignment
+                     {
+                         /* 构建 VariableAssignmentList 节点，结构：
+                            VariableAssignmentList
+                            ├─ VariableAssignmentList (子节点，由前一个 variableAssignmentList 产生式返回的 AST 节点)
+                            └─ VariableAssignment (子节点，由 variableAssignment 产生式返回的 AST 节点)
+                         */
+                         $$ = create_node("VariableAssignmentList");
+                         add_child($$, $1);  // 前一个变量赋值列表
+                         add_child($$, $2);  // 当前变量赋值
+                     }
+                   | variableAssignment
+                     {
+                         /* 单个变量赋值时，直接返回该变量赋值的 AST 节点 */
+                         $$ = create_node("VariableAssignmentList");
+                         add_child($$, $1);
+                     }
+                   ;
+
+
+variableAssignment: IDENTIFIER ASSIGN expression SEMICOLON
+                   {$$ = create_node("variableAssignment");
+                   { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $1); add_child($$, node); }
+                   { ASTNode *node = create_node("AssignmentOperator"); set_node_string_value(node, $2); add_child($$, node); }
+                   add_child($$, $3);
+                   { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }}
+
+expression:primary{$$ = $1;}
+          
+          ;
+primary: IDENTIFIER {$$ = create_node("Identifier"); set_node_string_value($$, $1);}
+       | STRING_LITERAL {$$ = create_node("StringLiteral"); set_node_string_value($$, $1);}
+       | INT_NUMBER {$$ = create_node("IntegerLiteral"); set_node_int_value($$, $1);}
+       | FLOAT_NUMBER {$$ = create_node("FloatLiteral"); set_node_float_value($$, $1);}
+       | FALSE0 {$$ = create_node("BooleanLiteral"); set_node_string_value($$, $1);} 
+       | TRUE0 {$$ = create_node("BooleanLiteral"); set_node_string_value($$, $1);}
+       | TIMEPOINT {$$ = create_node("TimePoint"); set_node_string_value($$, $1);}
 
 %%
 
