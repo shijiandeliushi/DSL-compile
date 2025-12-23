@@ -20,8 +20,8 @@ char* copy_string(const char* src) {
     return dest;
 }
 
-/* 行号计数器 */
-int line = 1;
+/* 行号计数器 - 与语法分析器共享的yylineno变量 */
+extern int yylineno;
 
 /* 外部 yylval（由 parser/bison 定义） */
 /* 注意：若使用 reentrant 解析器，需调整 yylex 签名并使用传入的 yylval 指针 */
@@ -76,6 +76,7 @@ WHITESPACE      [ \t\r]+
 "between"       { yylval.str_val = copy_string(yytext); return BETWEEN; }
 "and"           { yylval.str_val = copy_string(yytext); return AND; }
 "or"            { yylval.str_val = copy_string(yytext); return OR; }
+"not"           { yylval.str_val = copy_string(yytext); return NOT; }
 "time"          { yylval.str_val = copy_string(yytext); return TIME; }
 "temperature"   { yylval.str_val = copy_string(yytext); return TEMPERATURE; }
 "duration"      { yylval.str_val = copy_string(yytext); return DURATION; }
@@ -115,7 +116,9 @@ WHITESPACE      [ \t\r]+
 "fri"            { yylval.str_val = copy_string(yytext); return FRI; }
 "sat"            { yylval.str_val = copy_string(yytext); return SAT; }
 "sun"            { yylval.str_val = copy_string(yytext); return SUN; }
-    /* ========== 标识符 ========== */
+  
+
+  /* ========== 标识符 ========== */
     /* 支持点号分隔的标识符 */
 {DOTTED_IDENTIFIER} { 
     yylval.str_val = copy_string(yytext);
@@ -204,7 +207,7 @@ WHITESPACE      [ \t\r]+
     /* ========== 特殊处理 ========== */
     /* 换行符 - 更新行号 */
 \n          { 
-    line++; 
+    yylineno++; 
 }
 
     /* 注释 - 忽略 */
@@ -216,7 +219,7 @@ WHITESPACE      [ \t\r]+
     /* 其他字符 - 作为错误处理 */
     .           { 
         /* 你可以改成返回一个 ERROR token */
-        fprintf(stderr, "line%d: 非法字符 '%c'\n", line, yytext[0]); 
+        fprintf(stderr, "line%d: 非法字符 '%c'\n", yylineno, yytext[0]); 
     }
 
 %%

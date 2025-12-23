@@ -41,8 +41,8 @@ ASTNode *ast_root = NULL;
 }
 
 /* 终结符（token）声明：把 lexer 中可能返回的 token 列出并关联 union 字段（若有） */
-%token <str_val> DEVICE AS VAR WHEN THEN SET TO BETWEEN AND OR TIME TEMPERATURE DURATION BOOL0 FLOAT0 INT0 RULE
-%token IF ELSE WHILE DO FOR AFTER BEFORE DAY OF WEEK IN_TOKEN
+%token <str_val> DEVICE AS VAR WHEN THEN SET TO BETWEEN AND OR NOT TIME TEMPERATURE DURATION BOOL0 FLOAT0 INT0 RULE
+%token <str_val> IF ELSE WHILE DO FOR AFTER BEFORE DAY OF WEEK IN_TOKEN
 %token <str_val> LIGHT AIR_CONDITIONER WATER_HEATER TELEVISION WASHER FRIDGE ELECTRIC_FAN
 %token <str_val> FALSE0 TRUE0 ON OFF
 %token <str_val> MON TUE WED THU FRI SAT SUN
@@ -60,10 +60,11 @@ ASTNode *ast_root = NULL;
 %type <ast_node> program deviceDeclarationList deviceDeclaration deviceType
 %type <ast_node> variableDeclarationList variableDeclaration valueType idnetifierList 
 %type <ast_node> variableAssignmentList variableAssignment expression primary
-
-
-
-/* 优先级和结合性定义 */
+%type <ast_node> relational_op additive_op multiplicative_op timeCondition dayList days day deviceCondition
+%type <ast_node> ruleList rule
+%type <ast_node> stateList state action 
+%type <ast_node> ifStatement elseStatement whileStatement forStatement range condition
+/* 优先级和结合性定义 */ 
 %left OR
 %left AND
 %left EQ NEQ
@@ -79,10 +80,11 @@ ASTNode *ast_root = NULL;
 %%
 /* 语法规则 */
 //字母全部大写的终结符，由词法分析器yylex()返回的，小写字母开头的时非终结符
-program: deviceDeclarationList variableDeclarationList variableAssignmentList { ast_root = create_node("Program"); 
+program: deviceDeclarationList variableDeclarationList variableAssignmentList ruleList{ ast_root = create_node("Program"); 
                                                     add_child(ast_root, $1);
                                                     add_child(ast_root, $2);
                                                     add_child(ast_root, $3);
+                                                    add_child(ast_root, $4);
                                                   }
 
 
@@ -164,12 +166,12 @@ variableDeclaration: VAR valueType idnetifierList SEMICOLON
                    { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }}
 
 //valueType是关键字
-valueType:TIME    { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
-        | TEMPERATURE  { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
-        | DURATION    { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
-        | BOOL0         { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
-        | FLOAT0        { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
-        | INT0          { $$ = create_node("ValueType"); set_node_string_value($$, $1); }
+valueType:TIME    { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+        | TEMPERATURE  { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+        | DURATION    { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+        | BOOL0         { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+        | FLOAT0        { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+        | INT0          { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         ;
 
 idnetifierList:idnetifierList COMMA IDENTIFIER {$$ = create_node("IdentifierList");
@@ -177,7 +179,7 @@ idnetifierList:idnetifierList COMMA IDENTIFIER {$$ = create_node("IdentifierList
                                                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $2); add_child($$, node); }
                                                 { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $3); add_child($$, node); }}
                 | IDENTIFIER  {$$ = create_node("IdentifierList");
-                                { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $1); add_child($$, node); }}
+                                { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $1); add_child($$, node); }}
                 ;
 
 //变量赋值部分
@@ -208,9 +210,121 @@ variableAssignment: IDENTIFIER ASSIGN expression SEMICOLON
                    add_child($$, $3);
                    { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }}
 
-expression:primary{$$ = $1;}
-          
+expression:primary{$$ = create_node("Expression"); add_child($$, $1);}
+            | timeCondition
+            {$$ = create_node("Expression"); add_child($$, $1);}
+            | deviceCondition
+            {$$ = create_node("Expression"); add_child($$, $1);}
+            | LPAREN expression RPAREN 
+            {$$ = create_node("Expression"); 
+            { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $1); add_child($$, node); }
+            add_child($$, $2);
+            { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $3); add_child($$, node); }}
+            | NOT expression
+            {$$ = create_node("Expression");
+            { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+            add_child($$, $2);}
+            | expression AND expression
+            {$$ = create_node("Expression");
+            { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $2); add_child($$, node); }
+            add_child($$, $1);
+            add_child($$, $3);}
+            | expression OR expression
+            {$$ = create_node("OrOperator");
+            { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $2); add_child($$, node); }
+            add_child($$, $1);
+            add_child($$, $3);}
+            // 乘法优先级操作符
+            | expression multiplicative_op expression
+            {$$ = create_node("Expression");
+            add_child($$, $2);
+            add_child($$, $1);
+            add_child($$, $3);}
+            // 加法优先级操作符
+            | expression additive_op expression
+            {$$ = create_node("Expression");
+            add_child($$, $2);
+            add_child($$, $1);
+            add_child($$, $3);}
+            // 关系优先级操作符
+            | expression relational_op expression
+            {$$ = create_node("Expression");
+            add_child($$, $2);
+            add_child($$, $1);
+            add_child($$, $3);}
           ;
+
+// 关系操作符：==, !=, <, >, <=, >=
+relational_op: EQ | NEQ | LT | GT | LE | GE
+         { $$ = create_node("Operator"); 
+         { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); add_child($$, node);} }
+
+// 加法操作符：+, -
+additive_op: PLUS | MINUS
+         { $$ = create_node("Operator"); 
+         { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); add_child($$, node);}
+          }
+
+// 乘法操作符：*, /
+multiplicative_op: TIMES | DIVIDE
+         { $$ = create_node("Operator"); 
+         { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node);add_child($$, node); } 
+          }    
+
+timeCondition:TIME BETWEEN TIMEPOINT  AND  TIMEPOINT
+             {$$ = create_node("TimeCondition");
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $2); add_child($$, node); }
+             { ASTNode *node = create_node("TimePoint"); set_node_string_value(node, $3); add_child($$, node); }
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $4); add_child($$, node); }
+
+             { ASTNode *node = create_node("TimePoint"); set_node_string_value(node, $5); add_child($$, node); }
+             }
+            | TIME  AFTER  TIMEPOINT
+             {$$ = create_node("TimeCondition");
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $2); add_child($$, node); }
+             { ASTNode *node = create_node("TimePoint"); set_node_string_value(node, $3); add_child($$, node); }
+             }
+            | TIME  BEFORE  TIMEPOINT
+             {$$ = create_node("TimeCondition");
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $2); add_child($$, node); }
+             { ASTNode *node = create_node("TimePoint"); set_node_string_value(node, $3); add_child($$, node); }
+             }
+            |  DAY  OF  WEEK  IN_TOKEN  dayList
+             {$$ = create_node("TimeCondition");
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $2); add_child($$, node); }
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $3); add_child($$, node); }
+             { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $4); add_child($$, node); }
+             add_child($$, $5);}
+            ;
+dayList:LBRACKET days RBRACKET
+        {$$ = create_node("DayList");
+        { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $1); add_child($$, node); }
+        add_child($$, $2);
+        { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $3); add_child($$, node); }}
+
+days:days day
+    {$$ = create_node("Days"); 
+    add_child($$, $1);
+    add_child($$, $2);}
+    | day
+    {$$ = create_node("Days"); 
+    add_child($$, $1);}
+    ;
+
+day:MON | TUE| WED | THU | FRI| SAT | SUN
+    {$$ = create_node("Day"); 
+    { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }}
+
+deviceCondition:IDENTIFIER  relational_op  expression
+            {$$ = create_node("DeviceCondition");
+            { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $1); add_child($$, node); }
+            add_child($$, $2);
+            add_child($$, $3);}
+
 primary: IDENTIFIER {$$ = create_node("Identifier"); set_node_string_value($$, $1);}
        | STRING_LITERAL {$$ = create_node("StringLiteral"); set_node_string_value($$, $1);}
        | INT_NUMBER {$$ = create_node("IntegerLiteral"); set_node_int_value($$, $1);}
@@ -219,10 +333,139 @@ primary: IDENTIFIER {$$ = create_node("Identifier"); set_node_string_value($$, $
        | TRUE0 {$$ = create_node("BooleanLiteral"); set_node_string_value($$, $1);}
        | TIMEPOINT {$$ = create_node("TimePoint"); set_node_string_value($$, $1);}
 
+//规则部分
+ruleList: ruleList rule
+             {
+                 $$ = create_node("RuleList");
+                 add_child($$, $1);
+                 add_child($$, $2);
+             }
+        | rule
+             {
+                 $$ = create_node("RuleList");
+                 add_child($$, $1);
+             }
+        ;   
+
+rule:RULE IDENTIFIER LBRACE stateList RBRACE 
+             {
+                 $$ = create_node("Rule");
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $2); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $3); add_child($$, node); }
+                 add_child($$, $4);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $5); add_child($$, node); }
+             }
+
+stateList: stateList state
+             {
+                 $$ = create_node("StateList");
+                 add_child($$, $1);
+                 add_child($$, $2);
+             }
+        | state
+             {
+                 $$ = create_node("StateList");
+                 add_child($$, $1);
+             }
+        ;   
+
+state:action {$$ = create_node("State"); add_child($$, $1);}
+     | ifStatement {$$ = create_node("State"); add_child($$, $1);}
+     | whileStatement {$$ = create_node("State"); add_child($$, $1);}
+     | forStatement {$$ = create_node("State"); add_child($$, $1);}
+     ;
+
+action:SET IDENTIFIER TO expression SEMICOLON
+             {
+                 $$ = create_node("Action");
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $2); add_child($$, node); }
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $3); add_child($$, node); }
+                 add_child($$, $4);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $5); add_child($$, node); }
+             }
+//源语言所有的花括号后面都没有分号
+ifStatement: IF LPAREN condition RPAREN LBRACE stateList RBRACE elseStatement
+             {
+                 $$ = create_node("IfStatement");
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $2); add_child($$, node); }
+                 add_child($$, $3);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $5); add_child($$, node); }
+                 add_child($$, $6);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $7); add_child($$, node); }
+                 add_child($$, $8);
+             }
+
+elseStatement: ELSE LBRACE stateList RBRACE 
+             {
+                 $$ = create_node("ElseStatement");
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $2); add_child($$, node); }
+                 add_child($$, $3);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }
+             }
+             |
+             ;
+
+whileStatement: WHILE LPAREN condition RPAREN DO LBRACE stateList RBRACE
+             {
+                 $$ = create_node("WhileStatement");
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $2); add_child($$, node); }
+                 add_child($$, $3);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $5); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $6); add_child($$, node); }
+                 add_child($$, $7);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $8); add_child($$, node); }
+             }
+
+forStatement: FOR LPAREN IDENTIFIER IN_TOKEN range RPAREN LBRACE stateList RBRACE
+             {
+                 $$ = create_node("ForStatement");
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $2); add_child($$, node); }
+                 { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $3); add_child($$, node); }
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $4); add_child($$, node); }
+                 add_child($$, $5);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $6); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $7); add_child($$, node); }
+                 add_child($$, $8);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $9); add_child($$, node); }
+             }
+
+range:LBRACKET INT_NUMBER COMMA INT_NUMBER RBRACKET 
+            {
+                 $$ = create_node("Range");
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $1); add_child($$, node); }
+                { ASTNode *node = create_node("INT_NUMBER"); set_node_int_value(node, $2); add_child($$, node); }
+             
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $3); add_child($$, node); }
+                 { ASTNode *node = create_node("INT_NUMBER"); set_node_int_value(node, $4); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $5); add_child($$, node); }
+            }
+        | LBRACKET TIMEPOINT COMMA TIMEPOINT RBRACKET 
+        {
+                 $$ = create_node("Range");
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("TIMEPOINT"); set_node_string_value(node, $2); add_child($$, node); }
+             
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $3); add_child($$, node); }
+                 { ASTNode *node = create_node("TIMEPOINT"); set_node_string_value(node, $4); add_child($$, node); }
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $5); add_child($$, node); }
+        }
+        ;
+
+condition:expression{$$ = create_node("Condition"); add_child($$, $1);}
+
+
 %%
 
 int main(int argc, char **argv) {
-    /* 在 Windows 下设置控制台为 UTF-8，便于显示中文 */
+    /* 在 Windows 下设置控制台为 UTF-8，add_child($$, $5);便于显示中文 */
 #ifdef _WIN32
     SetConsoleOutputCP(65001);
 #endif
