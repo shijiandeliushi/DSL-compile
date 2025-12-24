@@ -98,7 +98,7 @@ extern int yydebug;
     ELECTRIC_FAN = 293,            /* ELECTRIC_FAN  */
     FALSE0 = 294,                  /* FALSE0  */
     TRUE0 = 295,                   /* TRUE0  */
-    ON = 296,                      /* ON  */
+    ON0 = 296,                     /* ON0  */
     OFF = 297,                     /* OFF  */
     MON = 298,                     /* MON  */
     TUE = 299,                     /* TUE  */

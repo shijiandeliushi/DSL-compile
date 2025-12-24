@@ -364,11 +364,11 @@ static const flex_int16_t yy_accept[239] =
     {   0,
         0,    0,   81,   79,   78,   76,   79,   79,   77,   66,
        67,   63,   61,   73,   62,   75,   64,   51,   50,   50,
-       50,   74,   72,   57,   65,   58,   48,   48,   48,   48,
+       50,   74,   72,   59,   65,   60,   48,   48,   48,   48,
        48,   48,   48,   70,   71,   48,   48,   48,   48,   48,
        48,   48,   48,   48,   48,   48,   48,   48,   48,   68,
        69,   78,   56,    0,   49,    0,   77,   53,    0,    0,
-        0,   50,   50,   59,   55,   60,    0,   48,   48,   48,
+        0,   50,   50,   57,   55,   58,    0,   48,   48,   48,
        48,   48,   48,   48,   48,   48,    2,   48,   48,   48,
        48,   22,   48,   48,   48,   48,   48,   48,   19,   29,
        48,   48,   27,   39,   10,   48,   48,   48,   48,   48,
@@ -1162,7 +1162,7 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 110 "lexer.l"
-{ yylval.str_val = copy_string(yytext); return ON; }
+{ yylval.str_val = copy_string(yytext); return ON0; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
@@ -1292,22 +1292,22 @@ YY_RULE_SETUP
 case 57:
 YY_RULE_SETUP
 #line 182 "lexer.l"
-{ yylval.str_val = copy_string(yytext); return LT; }
+{ yylval.str_val = copy_string(yytext); return LE; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
 #line 183 "lexer.l"
-{ yylval.str_val = copy_string(yytext); return GT; }
+{ yylval.str_val = copy_string(yytext); return GE; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
 #line 184 "lexer.l"
-{ yylval.str_val = copy_string(yytext); return LE; }
+{ yylval.str_val = copy_string(yytext); return LT; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
 #line 185 "lexer.l"
-{ yylval.str_val = copy_string(yytext); return GE; }
+{ yylval.str_val = copy_string(yytext); return GT; }
 	YY_BREAK
 /* 算术运算符 */
 case 61:

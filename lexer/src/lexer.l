@@ -69,8 +69,6 @@ WHITESPACE      [ \t\r]+
 "device"        { yylval.str_val = copy_string(yytext); return DEVICE; }
 "as"            { yylval.str_val = copy_string(yytext); return AS; }
 "var"           { yylval.str_val = copy_string(yytext); return VAR; }
-"when"          { yylval.str_val = copy_string(yytext); return WHEN; }
-"then"          { yylval.str_val = copy_string(yytext); return THEN; }
 "set"           { yylval.str_val = copy_string(yytext); return SET; }
 "to"            { yylval.str_val = copy_string(yytext); return TO; }
 "between"       { yylval.str_val = copy_string(yytext); return BETWEEN; }
@@ -106,7 +104,7 @@ WHITESPACE      [ \t\r]+
 
 "false"           { yylval.str_val = copy_string(yytext); return FALSE0; }
 "true"            { yylval.str_val = copy_string(yytext); return TRUE0; }
-"on"              { yylval.str_val = copy_string(yytext); return ON; }
+"on"              { yylval.str_val = copy_string(yytext); return ON0; }
 "off"             { yylval.str_val = copy_string(yytext); return OFF; }
 
 "mon"            { yylval.str_val = copy_string(yytext); return MON; }
@@ -178,10 +176,10 @@ WHITESPACE      [ \t\r]+
     /* 比较运算符 */
 "=="        { yylval.str_val = copy_string(yytext); return EQ; }
 "!="        { yylval.str_val = copy_string(yytext); return NEQ; }
-"<"         { yylval.str_val = copy_string(yytext); return LT; }
-">"         { yylval.str_val = copy_string(yytext); return GT; }
 "<="        { yylval.str_val = copy_string(yytext); return LE; }
 ">="        { yylval.str_val = copy_string(yytext); return GE; }
+"<"         { yylval.str_val = copy_string(yytext); return LT; }
+">"         { yylval.str_val = copy_string(yytext); return GT; }
 
     /* 算术运算符 */
 "+"         { yylval.str_val = copy_string(yytext); return PLUS; }
