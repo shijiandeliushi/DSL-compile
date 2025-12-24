@@ -6,6 +6,9 @@
 #include "ast.h"  // 包含 AST 相关定义
 
 #include <windows.h>
+#include "symbol.h"
+#include "semantic.h"
+#include "../codegen/codegen.h"
 
 
 
@@ -41,13 +44,13 @@ ASTNode *ast_root = NULL;
 }
 
 /* 终结符（token）声明：把 lexer 中可能返回的 token 列出并关联 union 字段（若有） */
-%token <str_val> DEVICE AS VAR WHEN THEN SET TO BETWEEN AND OR NOT TIME TEMPERATURE DURATION BOOL0 FLOAT0 INT0 RULE
+%token <str_val> DEVICE AS VAR   SET TO BETWEEN AND OR NOT TIME TEMPERATURE TIMEPOINT BOOL0 FLOAT0 INT0 RULE
 %token <str_val> IF ELSE WHILE DO FOR AFTER BEFORE DAY OF WEEK IN_TOKEN
 %token <str_val> LIGHT AIR_CONDITIONER WATER_HEATER TELEVISION WASHER FRIDGE ELECTRIC_FAN
 %token <str_val> FALSE0 TRUE0 ON0 OFF
 %token <str_val> MON TUE WED THU FRI SAT SUN
 
-%token <str_val> IDENTIFIER STRING_LITERAL TIMEPOINT
+%token <str_val> IDENTIFIER STRING_LITERAL 
 %token <int_val> INT_NUMBER
 %token <float_val> FLOAT_NUMBER
 
@@ -166,9 +169,8 @@ variableDeclaration: VAR valueType idnetifierList SEMICOLON
                    { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }}
 
 //valueType是关键字
-valueType:TIME    { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+valueType:TIMEPOINT    { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         | TEMPERATURE  { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
-        | DURATION    { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         | BOOL0         { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         | FLOAT0        { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         | INT0          { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
@@ -563,37 +565,42 @@ condition:expression{$$ = create_node("Condition"); add_child($$, $1);}
 %%
 
 int main(int argc, char **argv) {
-    /* 在 Windows 下设置控制台为 UTF-8，add_child($$, $5);便于显示中文 */
 #ifdef _WIN32
     SetConsoleOutputCP(65001);
 #endif
-    /* 优先使用命令行指定的输入文件；否则使用仓库根下的 D:\\input.txt 作为默认输入 */
+
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
-        if (!yyin) {
-            fprintf(stderr, "无法打开文件: %s\n", argv[1]);
-            return 1;
-        }
     } else {
-        const char *default_path = "D:\\input.txt";
-        yyin = fopen(default_path, "r");
-        if (!yyin) {
-            fprintf(stderr, "无法打开默认输入文件: %s\n", default_path);
-            return 1;
-        }
+        yyin = fopen("D:\\input.txt", "r");
     }
-    
-    printf("开始语法分析...\n");
-    if (yyparse() == 0) {
-        printf("\n=== 抽象语法树 (AST) ===\n");
-        if (ast_root) {
-            print_ast_tree(ast_root);
-        } else {
-            printf("AST 为空\n");
-        }
-        printf("=== 分析完成 ===\n");
+
+    if (!yyin) {
+        fprintf(stderr, "无法打开输入文件\n");
+        return 1;
     }
-    
+
+    printf("--- 步骤 1: 语法分析与 AST 构建 ---\n");
+    if (yyparse() == 0 && ast_root) {
+        printf("语法分析成功！\n");
+
+        printf("\n--- 步骤 2: 构建符号表 ---\n");
+        init_symbol_table();
+        build_symbol_table(ast_root);
+
+        printf("\n--- 步骤 3: 语义检查 ---\n");
+        check_semantics(ast_root);
+
+        printf("\n--- 步骤 4: 目标代码生成 (Python) ---\n");
+        printf("========================================\n");
+        generate_code(ast_root, 0);
+        printf("========================================\n");
+        
+        printf("\n编译完成。\n");
+    } else {
+        printf("编译失败。\n");
+    }
+
     if (yyin != stdin) fclose(yyin);
     return 0;
 }

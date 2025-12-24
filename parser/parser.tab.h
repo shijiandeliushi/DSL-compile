@@ -45,11 +45,11 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 31 "parser\\parser.y"
+#line 34 "parser/parser.y"
 
 #include "ast.h"
 
-#line 53 "parser\\parser.tab.h"
+#line 53 "parser/parser.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -63,77 +63,74 @@ extern int yydebug;
     DEVICE = 258,                  /* DEVICE  */
     AS = 259,                      /* AS  */
     VAR = 260,                     /* VAR  */
-    WHEN = 261,                    /* WHEN  */
-    THEN = 262,                    /* THEN  */
-    SET = 263,                     /* SET  */
-    TO = 264,                      /* TO  */
-    BETWEEN = 265,                 /* BETWEEN  */
-    AND = 266,                     /* AND  */
-    OR = 267,                      /* OR  */
-    NOT = 268,                     /* NOT  */
-    TIME = 269,                    /* TIME  */
-    TEMPERATURE = 270,             /* TEMPERATURE  */
-    DURATION = 271,                /* DURATION  */
-    BOOL0 = 272,                   /* BOOL0  */
-    FLOAT0 = 273,                  /* FLOAT0  */
-    INT0 = 274,                    /* INT0  */
-    RULE = 275,                    /* RULE  */
-    IF = 276,                      /* IF  */
-    ELSE = 277,                    /* ELSE  */
-    WHILE = 278,                   /* WHILE  */
-    DO = 279,                      /* DO  */
-    FOR = 280,                     /* FOR  */
-    AFTER = 281,                   /* AFTER  */
-    BEFORE = 282,                  /* BEFORE  */
-    DAY = 283,                     /* DAY  */
-    OF = 284,                      /* OF  */
-    WEEK = 285,                    /* WEEK  */
-    IN_TOKEN = 286,                /* IN_TOKEN  */
-    LIGHT = 287,                   /* LIGHT  */
-    AIR_CONDITIONER = 288,         /* AIR_CONDITIONER  */
-    WATER_HEATER = 289,            /* WATER_HEATER  */
-    TELEVISION = 290,              /* TELEVISION  */
-    WASHER = 291,                  /* WASHER  */
-    FRIDGE = 292,                  /* FRIDGE  */
-    ELECTRIC_FAN = 293,            /* ELECTRIC_FAN  */
-    FALSE0 = 294,                  /* FALSE0  */
-    TRUE0 = 295,                   /* TRUE0  */
-    ON0 = 296,                     /* ON0  */
-    OFF = 297,                     /* OFF  */
-    MON = 298,                     /* MON  */
-    TUE = 299,                     /* TUE  */
-    WED = 300,                     /* WED  */
-    THU = 301,                     /* THU  */
-    FRI = 302,                     /* FRI  */
-    SAT = 303,                     /* SAT  */
-    SUN = 304,                     /* SUN  */
-    IDENTIFIER = 305,              /* IDENTIFIER  */
-    STRING_LITERAL = 306,          /* STRING_LITERAL  */
-    TIMEPOINT = 307,               /* TIMEPOINT  */
-    INT_NUMBER = 308,              /* INT_NUMBER  */
-    FLOAT_NUMBER = 309,            /* FLOAT_NUMBER  */
-    EQ = 310,                      /* EQ  */
-    NEQ = 311,                     /* NEQ  */
-    LT = 312,                      /* LT  */
-    GT = 313,                      /* GT  */
-    LE = 314,                      /* LE  */
-    GE = 315,                      /* GE  */
-    PLUS = 316,                    /* PLUS  */
-    MINUS = 317,                   /* MINUS  */
-    TIMES = 318,                   /* TIMES  */
-    DIVIDE = 319,                  /* DIVIDE  */
-    ASSIGN = 320,                  /* ASSIGN  */
-    LPAREN = 321,                  /* LPAREN  */
-    RPAREN = 322,                  /* RPAREN  */
-    LBRACE = 323,                  /* LBRACE  */
-    RBRACE = 324,                  /* RBRACE  */
-    LBRACKET = 325,                /* LBRACKET  */
-    RBRACKET = 326,                /* RBRACKET  */
-    SEMICOLON = 327,               /* SEMICOLON  */
-    COMMA = 328,                   /* COMMA  */
-    COLON = 329,                   /* COLON  */
-    DOT = 330,                     /* DOT  */
-    UNARY_MINUS = 331              /* UNARY_MINUS  */
+    SET = 261,                     /* SET  */
+    TO = 262,                      /* TO  */
+    BETWEEN = 263,                 /* BETWEEN  */
+    AND = 264,                     /* AND  */
+    OR = 265,                      /* OR  */
+    NOT = 266,                     /* NOT  */
+    TIME = 267,                    /* TIME  */
+    TEMPERATURE = 268,             /* TEMPERATURE  */
+    TIMEPOINT = 269,               /* TIMEPOINT  */
+    BOOL0 = 270,                   /* BOOL0  */
+    FLOAT0 = 271,                  /* FLOAT0  */
+    INT0 = 272,                    /* INT0  */
+    RULE = 273,                    /* RULE  */
+    IF = 274,                      /* IF  */
+    ELSE = 275,                    /* ELSE  */
+    WHILE = 276,                   /* WHILE  */
+    DO = 277,                      /* DO  */
+    FOR = 278,                     /* FOR  */
+    AFTER = 279,                   /* AFTER  */
+    BEFORE = 280,                  /* BEFORE  */
+    DAY = 281,                     /* DAY  */
+    OF = 282,                      /* OF  */
+    WEEK = 283,                    /* WEEK  */
+    IN_TOKEN = 284,                /* IN_TOKEN  */
+    LIGHT = 285,                   /* LIGHT  */
+    AIR_CONDITIONER = 286,         /* AIR_CONDITIONER  */
+    WATER_HEATER = 287,            /* WATER_HEATER  */
+    TELEVISION = 288,              /* TELEVISION  */
+    WASHER = 289,                  /* WASHER  */
+    FRIDGE = 290,                  /* FRIDGE  */
+    ELECTRIC_FAN = 291,            /* ELECTRIC_FAN  */
+    FALSE0 = 292,                  /* FALSE0  */
+    TRUE0 = 293,                   /* TRUE0  */
+    ON0 = 294,                     /* ON0  */
+    OFF = 295,                     /* OFF  */
+    MON = 296,                     /* MON  */
+    TUE = 297,                     /* TUE  */
+    WED = 298,                     /* WED  */
+    THU = 299,                     /* THU  */
+    FRI = 300,                     /* FRI  */
+    SAT = 301,                     /* SAT  */
+    SUN = 302,                     /* SUN  */
+    IDENTIFIER = 303,              /* IDENTIFIER  */
+    STRING_LITERAL = 304,          /* STRING_LITERAL  */
+    INT_NUMBER = 305,              /* INT_NUMBER  */
+    FLOAT_NUMBER = 306,            /* FLOAT_NUMBER  */
+    EQ = 307,                      /* EQ  */
+    NEQ = 308,                     /* NEQ  */
+    LT = 309,                      /* LT  */
+    GT = 310,                      /* GT  */
+    LE = 311,                      /* LE  */
+    GE = 312,                      /* GE  */
+    PLUS = 313,                    /* PLUS  */
+    MINUS = 314,                   /* MINUS  */
+    TIMES = 315,                   /* TIMES  */
+    DIVIDE = 316,                  /* DIVIDE  */
+    ASSIGN = 317,                  /* ASSIGN  */
+    LPAREN = 318,                  /* LPAREN  */
+    RPAREN = 319,                  /* RPAREN  */
+    LBRACE = 320,                  /* LBRACE  */
+    RBRACE = 321,                  /* RBRACE  */
+    LBRACKET = 322,                /* LBRACKET  */
+    RBRACKET = 323,                /* RBRACKET  */
+    SEMICOLON = 324,               /* SEMICOLON  */
+    COMMA = 325,                   /* COMMA  */
+    COLON = 326,                   /* COLON  */
+    DOT = 327,                     /* DOT  */
+    UNARY_MINUS = 328              /* UNARY_MINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -142,14 +139,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 36 "parser\\parser.y"
+#line 39 "parser/parser.y"
 
     int int_val;
     double float_val;
     char *str_val;
     ASTNode *ast_node;
 
-#line 153 "parser\\parser.tab.h"
+#line 150 "parser/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

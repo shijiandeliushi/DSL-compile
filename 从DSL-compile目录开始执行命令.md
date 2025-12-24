@@ -10,7 +10,7 @@
 + `cd ..`
 + `cd ..`
 
-+ `& gcc parser\parser.tab.c lexer\src\lex.yy.c parser\ast.c -Iparser -o dsl.exe`  （相对路径不用打引号，gcc命令-o后面是编译生成的文件名，可能也是指定的路径，但只会创建最后一个可执行文件，不会创建目录）
++ `& gcc parser\parser.tab.c lexer\src\lex.yy.c parser\ast.c parser\symbol.c parser\semantic.c codegen\codegen.c -Iparser -o dsl.exe`  （相对路径不用打引号，gcc命令-o后面是编译生成的文件名，可能也是指定的路径，但只会创建最后一个可执行文件，不会创建目录）
 + `.\dsl.exe`
 
 

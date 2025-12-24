@@ -5,7 +5,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <locale.h>
-#include "..\\..\\parser\\parser.tab.h"
+#include "../../parser/parser.tab.h"
 
 
 
@@ -77,7 +77,7 @@ WHITESPACE      [ \t\r]+
 "not"           { yylval.str_val = copy_string(yytext); return NOT; }
 "time"          { yylval.str_val = copy_string(yytext); return TIME; }
 "temperature"   { yylval.str_val = copy_string(yytext); return TEMPERATURE; }
-"duration"      { yylval.str_val = copy_string(yytext); return DURATION; }
+"timepoint"      { yylval.str_val = copy_string(yytext); return TIMEPOINT; }
 "bool"          { yylval.str_val = copy_string(yytext); return BOOL0; }
 "int"           {yylval.str_val = copy_string(yytext); return INT0;}
 "float"         {yylval.str_val = copy_string(yytext); return FLOAT0;}
