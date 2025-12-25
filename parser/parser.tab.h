@@ -45,11 +45,11 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 34 "parser/parser.y"
+#line 34 "parser\\parser.y"
 
 #include "ast.h"
 
-#line 53 "parser/parser.tab.h"
+#line 53 "parser\\parser.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -75,62 +75,63 @@ extern int yydebug;
     BOOL0 = 270,                   /* BOOL0  */
     FLOAT0 = 271,                  /* FLOAT0  */
     INT0 = 272,                    /* INT0  */
-    RULE = 273,                    /* RULE  */
-    IF = 274,                      /* IF  */
-    ELSE = 275,                    /* ELSE  */
-    WHILE = 276,                   /* WHILE  */
-    DO = 277,                      /* DO  */
-    FOR = 278,                     /* FOR  */
-    AFTER = 279,                   /* AFTER  */
-    BEFORE = 280,                  /* BEFORE  */
-    DAY = 281,                     /* DAY  */
-    OF = 282,                      /* OF  */
-    WEEK = 283,                    /* WEEK  */
-    IN_TOKEN = 284,                /* IN_TOKEN  */
-    LIGHT = 285,                   /* LIGHT  */
-    AIR_CONDITIONER = 286,         /* AIR_CONDITIONER  */
-    WATER_HEATER = 287,            /* WATER_HEATER  */
-    TELEVISION = 288,              /* TELEVISION  */
-    WASHER = 289,                  /* WASHER  */
-    FRIDGE = 290,                  /* FRIDGE  */
-    ELECTRIC_FAN = 291,            /* ELECTRIC_FAN  */
-    FALSE0 = 292,                  /* FALSE0  */
-    TRUE0 = 293,                   /* TRUE0  */
-    ON0 = 294,                     /* ON0  */
-    OFF = 295,                     /* OFF  */
-    MON = 296,                     /* MON  */
-    TUE = 297,                     /* TUE  */
-    WED = 298,                     /* WED  */
-    THU = 299,                     /* THU  */
-    FRI = 300,                     /* FRI  */
-    SAT = 301,                     /* SAT  */
-    SUN = 302,                     /* SUN  */
-    IDENTIFIER = 303,              /* IDENTIFIER  */
-    STRING_LITERAL = 304,          /* STRING_LITERAL  */
-    INT_NUMBER = 305,              /* INT_NUMBER  */
-    FLOAT_NUMBER = 306,            /* FLOAT_NUMBER  */
-    EQ = 307,                      /* EQ  */
-    NEQ = 308,                     /* NEQ  */
-    LT = 309,                      /* LT  */
-    GT = 310,                      /* GT  */
-    LE = 311,                      /* LE  */
-    GE = 312,                      /* GE  */
-    PLUS = 313,                    /* PLUS  */
-    MINUS = 314,                   /* MINUS  */
-    TIMES = 315,                   /* TIMES  */
-    DIVIDE = 316,                  /* DIVIDE  */
-    ASSIGN = 317,                  /* ASSIGN  */
-    LPAREN = 318,                  /* LPAREN  */
-    RPAREN = 319,                  /* RPAREN  */
-    LBRACE = 320,                  /* LBRACE  */
-    RBRACE = 321,                  /* RBRACE  */
-    LBRACKET = 322,                /* LBRACKET  */
-    RBRACKET = 323,                /* RBRACKET  */
-    SEMICOLON = 324,               /* SEMICOLON  */
-    COMMA = 325,                   /* COMMA  */
-    COLON = 326,                   /* COLON  */
-    DOT = 327,                     /* DOT  */
-    UNARY_MINUS = 328              /* UNARY_MINUS  */
+    STATE = 273,                   /* STATE  */
+    RULE = 274,                    /* RULE  */
+    IF = 275,                      /* IF  */
+    ELSE = 276,                    /* ELSE  */
+    WHILE = 277,                   /* WHILE  */
+    DO = 278,                      /* DO  */
+    FOR = 279,                     /* FOR  */
+    AFTER = 280,                   /* AFTER  */
+    BEFORE = 281,                  /* BEFORE  */
+    DAY = 282,                     /* DAY  */
+    OF = 283,                      /* OF  */
+    WEEK = 284,                    /* WEEK  */
+    IN_TOKEN = 285,                /* IN_TOKEN  */
+    LIGHT = 286,                   /* LIGHT  */
+    AIR_CONDITIONER = 287,         /* AIR_CONDITIONER  */
+    WATER_HEATER = 288,            /* WATER_HEATER  */
+    TELEVISION = 289,              /* TELEVISION  */
+    WASHER = 290,                  /* WASHER  */
+    FRIDGE = 291,                  /* FRIDGE  */
+    ELECTRIC_FAN = 292,            /* ELECTRIC_FAN  */
+    FALSE0 = 293,                  /* FALSE0  */
+    TRUE0 = 294,                   /* TRUE0  */
+    ON0 = 295,                     /* ON0  */
+    OFF = 296,                     /* OFF  */
+    MON = 297,                     /* MON  */
+    TUE = 298,                     /* TUE  */
+    WED = 299,                     /* WED  */
+    THU = 300,                     /* THU  */
+    FRI = 301,                     /* FRI  */
+    SAT = 302,                     /* SAT  */
+    SUN = 303,                     /* SUN  */
+    IDENTIFIER = 304,              /* IDENTIFIER  */
+    STRING_LITERAL = 305,          /* STRING_LITERAL  */
+    INT_NUMBER = 306,              /* INT_NUMBER  */
+    FLOAT_NUMBER = 307,            /* FLOAT_NUMBER  */
+    EQ = 308,                      /* EQ  */
+    NEQ = 309,                     /* NEQ  */
+    LT = 310,                      /* LT  */
+    GT = 311,                      /* GT  */
+    LE = 312,                      /* LE  */
+    GE = 313,                      /* GE  */
+    PLUS = 314,                    /* PLUS  */
+    MINUS = 315,                   /* MINUS  */
+    TIMES = 316,                   /* TIMES  */
+    DIVIDE = 317,                  /* DIVIDE  */
+    ASSIGN = 318,                  /* ASSIGN  */
+    LPAREN = 319,                  /* LPAREN  */
+    RPAREN = 320,                  /* RPAREN  */
+    LBRACE = 321,                  /* LBRACE  */
+    RBRACE = 322,                  /* RBRACE  */
+    LBRACKET = 323,                /* LBRACKET  */
+    RBRACKET = 324,                /* RBRACKET  */
+    SEMICOLON = 325,               /* SEMICOLON  */
+    COMMA = 326,                   /* COMMA  */
+    COLON = 327,                   /* COLON  */
+    DOT = 328,                     /* DOT  */
+    UNARY_MINUS = 329              /* UNARY_MINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -139,14 +140,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 39 "parser/parser.y"
+#line 39 "parser\\parser.y"
 
     int int_val;
     double float_val;
     char *str_val;
     ASTNode *ast_node;
 
-#line 150 "parser/parser.tab.h"
+#line 151 "parser\\parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

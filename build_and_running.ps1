@@ -1,35 +1,30 @@
-# HomeLang Build Script (English Version to avoid encoding issues)
+# HomeLang Project Build Script (PowerShell - English Version)
+# Follows the exact command sequence provided by user
 
-Write-Host "==========================================" -ForegroundColor Cyan
-Write-Host "   HomeLang Compiler Build System" -ForegroundColor Cyan
-Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host "--- Starting Build Process ---" -ForegroundColor Cyan
 
-# 1. Run Bison
-Write-Host "[1/4] Running win_bison..." -ForegroundColor Yellow
-& win_bison -d parser/parser.y -o parser/parser.tab.c
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] Bison failed." -ForegroundColor Red
-    exit $LASTEXITCODE
-}
+# 1. cd lexer/src
+Write-Host "[Step 1] Entering lexer/src..." -ForegroundColor Yellow
+Set-Location lexer/src
 
-# 2. Run Flex
-Write-Host "[2/4] Running win_flex..." -ForegroundColor Yellow
-& win_flex -o lexer/src/lex.yy.c lexer/src/lexer.l
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] Flex failed." -ForegroundColor Red
-    exit $LASTEXITCODE
-}
+# 2. win_flex lexer.l
+Write-Host "[Step 2] Running win_flex..." -ForegroundColor Yellow
+& win_flex lexer.l
+if ($LASTEXITCODE -ne 0) { Write-Host "Flex failed"; exit $LASTEXITCODE }
 
-# 3. Compile with GCC
-Write-Host "[3/4] Compiling with GCC..." -ForegroundColor Yellow
-& gcc parser/parser.tab.c `
-    lexer/src/lex.yy.c `
-    parser/ast.c `
-    parser/symbol.c `
-    parser/semantic.c `
-    codegen/codegen.c `
-    -Iparser -Icodegen `
-    -o dsl.exe
+# 3 & 4. cd .. / cd ..
+Write-Host "[Step 3 & 4] Returning to root..." -ForegroundColor Yellow
+Set-Location ../..
+
+# 5. win_bison
+Write-Host "[Step 5] Running win_bison..." -ForegroundColor Yellow
+& win_bison -d parser\parser.y -o parser\parser.tab.c
+if ($LASTEXITCODE -ne 0) { Write-Host "Bison failed"; exit $LASTEXITCODE }
+
+# 6. GCC Compile
+Write-Host "[Step 6] Compiling with GCC..." -ForegroundColor Yellow
+# Added -Icodegen to ensure codegen.h is found
+& gcc parser\parser.tab.c lexer\src\lex.yy.c parser\ast.c parser\symbol.c semantic\semantic.c codegen\codegen.c -Iparser -Icodegen -o dsl.exe
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[ERROR] GCC Compilation failed." -ForegroundColor Red
@@ -37,10 +32,9 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "[SUCCESS] Build complete: dsl.exe" -ForegroundColor Green
-Write-Host "==========================================" -ForegroundColor Cyan
 
-# 4. Run Compiler
-Write-Host "[4/4] Starting Compiler..." -ForegroundColor Yellow
+# 7. Run dsl.exe
+Write-Host "[Step 7] Running compiler..." -ForegroundColor Yellow
 if (Test-Path "./dsl.exe") {
     & ./dsl.exe
 } else {

@@ -78,6 +78,7 @@ WHITESPACE      [ \t\r]+
 "time"          { yylval.str_val = copy_string(yytext); return TIME; }
 "temperature"   { yylval.str_val = copy_string(yytext); return TEMPERATURE; }
 "timepoint"      { yylval.str_val = copy_string(yytext); return TIMEPOINT; }
+"state"          { yylval.str_val = copy_string(yytext); return STATE; }
 "bool"          { yylval.str_val = copy_string(yytext); return BOOL0; }
 "int"           {yylval.str_val = copy_string(yytext); return INT0;}
 "float"         {yylval.str_val = copy_string(yytext); return FLOAT0;}

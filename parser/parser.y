@@ -7,7 +7,7 @@
 
 #include <windows.h>
 #include "symbol.h"
-#include "semantic.h"
+#include "../semantic/semantic.h"
 #include "../codegen/codegen.h"
 
 
@@ -44,7 +44,7 @@ ASTNode *ast_root = NULL;
 }
 
 /* 终结符（token）声明：把 lexer 中可能返回的 token 列出并关联 union 字段（若有） */
-%token <str_val> DEVICE AS VAR   SET TO BETWEEN AND OR NOT TIME TEMPERATURE TIMEPOINT BOOL0 FLOAT0 INT0 RULE
+%token <str_val> DEVICE AS VAR   SET TO BETWEEN AND OR NOT TIME TEMPERATURE TIMEPOINT BOOL0 FLOAT0 INT0 STATE RULE
 %token <str_val> IF ELSE WHILE DO FOR AFTER BEFORE DAY OF WEEK IN_TOKEN
 %token <str_val> LIGHT AIR_CONDITIONER WATER_HEATER TELEVISION WASHER FRIDGE ELECTRIC_FAN
 %token <str_val> FALSE0 TRUE0 ON0 OFF
@@ -66,7 +66,7 @@ ASTNode *ast_root = NULL;
 %type <ast_node>    timeCondition dayList days day 
 %type <ast_node> ruleList rule
 %type <ast_node> stateList state action status number switch 
-%type <ast_node> ifStatement  whileStatement forStatement range condition
+%type <ast_node> ifStatement  whileStatement forStatement range condition assignStatement
 /* 优先级和结合性定义 */ 
 %left OR
 %left AND
@@ -174,6 +174,7 @@ valueType:TIMEPOINT    { $$ = create_node("ValueType"); ASTNode *node = create_n
         | BOOL0         { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         | FLOAT0        { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         | INT0          { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
+        | STATE         { $$ = create_node("ValueType"); ASTNode *node = create_node("Keyword"); set_node_string_value(node, $1); add_child($$, node); }
         ;
 
 idnetifierList:idnetifierList COMMA IDENTIFIER {$$ = create_node("IdentifierList");
@@ -458,7 +459,17 @@ state:action {$$ = create_node("State"); add_child($$, $1);}
      | ifStatement {$$ = create_node("State"); add_child($$, $1);}
      | whileStatement {$$ = create_node("State"); add_child($$, $1);}
      | forStatement {$$ = create_node("State"); add_child($$, $1);}
+     | assignStatement {$$ = create_node("State"); add_child($$, $1);}
      ;
+
+assignStatement: IDENTIFIER ASSIGN expression SEMICOLON
+             {
+                 $$ = create_node("AssignStatement");
+                 { ASTNode *node = create_node("Identifier"); set_node_string_value(node, $1); add_child($$, node); }
+                 { ASTNode *node = create_node("Keyword"); set_node_string_value(node, $2); add_child($$, node); }
+                 add_child($$, $3);
+                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $4); add_child($$, node); }
+             }
 
 action:SET IDENTIFIER TO status SEMICOLON
              {
@@ -474,6 +485,8 @@ status: number
         {$$ = create_node("Status"); add_child($$, $1);}
         | switch
         {$$ = create_node("Status"); add_child($$, $1);}
+        | IDENTIFIER
+        {$$ = create_node("Status"); ASTNode *node = create_node("Identifier"); set_node_string_value(node, $1); add_child($$, node);}
         ;
 
 number: INT_NUMBER {$$ = create_node("IntegerLiteral"); set_node_int_value($$, $1);}
@@ -583,10 +596,13 @@ int main(int argc, char **argv) {
     printf("--- 步骤 1: 语法分析与 AST 构建 ---\n");
     if (yyparse() == 0 && ast_root) {
         printf("语法分析成功！\n");
+        print_ast_tree(ast_root);
 
         printf("\n--- 步骤 2: 构建符号表 ---\n");
         init_symbol_table();
         build_symbol_table(ast_root);
+        printf("\n=== 符号表内容 ===\n");
+        print_symbol_table();
 
         printf("\n--- 步骤 3: 语义检查 ---\n");
         check_semantics(ast_root);

@@ -17,5 +17,6 @@ void init_symbol_table();
 int insert_symbol(char *name, SymbolKind kind, char *sub_type);
 Symbol* lookup_symbol(char *name);
 void build_symbol_table(ASTNode *node);
+void print_symbol_table();
 
 #endif
