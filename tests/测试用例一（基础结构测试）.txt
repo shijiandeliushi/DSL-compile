@@ -1,0 +1,18 @@
+# 1. 设备声明
+device LIGHT living_room_light as "客厅大灯"
+device AIR_CONDITIONER main_ac as "主卧空调"
+
+# 2. 变量声明
+var int target_temp;
+
+# 3. 变量赋值
+target_temp = 26;
+
+# 4. 规则定义
+rule basic_control {
+    set living_room_light.status to on;
+    set living_room_light.brightness to 50;
+    set main_ac.status to on;
+    set main_ac.temperature to target_temp;
+    set main_ac.mode to 2;
+}

@@ -6,7 +6,10 @@
 
 
 
-// 创建 AST 节点，type为节点类型
+// 【新增】声明外部的 yylineno，它由词法分析器(Lexer)维护
+extern int yylineno;
+
+// 创建 AST 节点
 ASTNode* create_node(char *type) {
     ASTNode *node = (ASTNode*)malloc(sizeof(ASTNode));
     node->type = strdup(type);
@@ -15,9 +18,13 @@ ASTNode* create_node(char *type) {
     node->left = node->right = NULL;
     node->children = NULL;
     node->child_count = 0;
+    
+    // 【新增】自动记录当前行号
+    // 如果 yylineno 尚未初始化（例如在解析开始前），默认为 1
+    node->lineno = yylineno > 0 ? yylineno : 1; 
+    
     return node;
 }
-
 // 设置节点的值（字符串类型）
 void set_node_string_value(ASTNode *node, char *value) {
     if (node == NULL) return;

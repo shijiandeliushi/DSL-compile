@@ -1,0 +1,51 @@
+# 1. 设备声明
+device AIR_CONDITIONER living_room_ac as "客厅空调"
+device LIGHT corridor_light as "走廊灯"
+device ELECTRIC_FAN bedroom_fan as "卧室风扇"
+
+# 2. 变量声明
+var int temp, humidity, retry_count;
+var bool system_on, night_mode;
+
+# 3. 变量赋值
+temp = 32;
+humidity = 85;
+retry_count = 0;
+system_on = true;
+night_mode = true;
+
+# 4. 规则定义
+rule deep_nested_logic {
+    # 第一层：if
+    if (system_on == true) {
+        
+        # 第二层：嵌套 if
+        if (temp > 30) {
+            set living_room_ac.temperature to 24;
+            
+            # 第三层：嵌套 while
+            while (retry_count < 3) do {
+                
+                # 第四层：嵌套 if (检查湿度)
+                if (humidity > 80) {
+                    
+                    # 第五层：嵌套 for 循环 (模拟闪烁提醒)
+                    for (i in [1, 5]) {
+                        set corridor_light.status to on;
+                        set corridor_light.status to off;
+                    }
+                    
+                    set bedroom_fan.status to on;
+                }
+                
+                # 变量自增
+                retry_count = retry_count + 1;
+            }
+        }
+        
+        # 第二层：另一个独立的 if
+        if (night_mode == true) {
+            set corridor_light.status to on;
+        }
+    }
+}

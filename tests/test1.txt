@@ -1,0 +1,35 @@
+# 1. 设备声明
+device ELECTRIC_FAN parlour_electric_fan as "客厅电风扇"
+device ELECTRIC_FAN parlour_electric_fan as "电风扇"
+device LIGHT corridor_light as "走廊灯"
+device AIR_CONDITIONER  ac as "空调"
+
+# 2. 变量声明
+var int counter;
+
+# 3. 变量赋值
+count = 2;
+
+# 4. 规则定义
+rule loop_test {
+    # 测试 while 循环
+    while (counter < 3) do {
+        set corridor_light.status to 1;
+        set corridor_light1.status to off;
+        set corridor_light.status to off;
+        counter = true;
+    }
+
+    # 测试整数范围 for 循环
+	
+       set parlour_electric_fan.status to on;
+    for (i in [1, 5]) {
+        set parlour_electric_fan.speed to i;
+    }
+
+    # 测试时间点 (HomeLang 特色)
+    if (time between 23:00 and 22:00) {
+        set parlour_electric_fan.oscillation to 0;
+	set ac.temperture to 15;
+    }
+}

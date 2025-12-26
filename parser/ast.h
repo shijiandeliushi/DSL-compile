@@ -30,8 +30,10 @@ typedef struct ASTNode {
     NodeValue value;       // 节点值
     struct ASTNode *left;  // 左子节点
     struct ASTNode *right; // 右子节点
-    struct ASTNode **children; // 可变数量的子节点数组（可为 NULL）
+    struct ASTNode **children; // 可变数量的子节点数组
     int child_count;           // 子节点数量
+    
+    int lineno;            // 【新增】行号字段
 } ASTNode;
 
 // 创建 AST 节点（type 可为 NULL）

@@ -560,17 +560,7 @@ range:LBRACKET INT_NUMBER COMMA INT_NUMBER RBRACKET
                  { ASTNode *node = create_node("INT_NUMBER"); set_node_int_value(node, $4); add_child($$, node); }
                  { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $5); add_child($$, node); }
             }
-        | LBRACKET TIMEPOINT COMMA TIMEPOINT RBRACKET 
-        {
-                 $$ = create_node("Range");
-                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $1); add_child($$, node); }
-                 { ASTNode *node = create_node("TIMEPOINT"); set_node_string_value(node, $2); add_child($$, node); }
-             
-                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $3); add_child($$, node); }
-                 { ASTNode *node = create_node("TIMEPOINT"); set_node_string_value(node, $4); add_child($$, node); }
-                 { ASTNode *node = create_node("fenjiefu"); set_node_string_value(node, $5); add_child($$, node); }
-        }
-        ;
+        
 
 condition:expression{$$ = create_node("Condition"); add_child($$, $1);}
 
