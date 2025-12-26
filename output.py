@@ -1,26 +1,34 @@
 from preDefinition import *
 import datetime
 
-# 补充生成的辅助函数
-def is_time_after(t): return get_current_time_str() >= t
-def is_time_before(t): return get_current_time_str() <= t
-
-parlour_electric_fan = ElectricFan('parlour_electric_fan','客厅电风扇')
+living_room_ac = AirConditioner('living_room_ac','客厅空调')
 corridor_light = Light('corridor_light','走廊灯')
-counter = 0
-counter = 0
+bedroom_fan = ElectricFan('bedroom_fan','卧室风扇')
+temp = 0
+humidity = 0
+retry_count = 0
+system_on = 0
+night_mode = 0
+temp = 32
+humidity = 85
+retry_count = 0
+system_on = True
+night_mode = False
 
-def rule_loop_test():
-    global counter
-    while counter < 3:
-        corridor_light.set_status('on')
-        corridor_light.set_status('off')
-        counter = counter + 1
-    parlour_electric_fan.set_status('on')
-    for i in range(1, 6):
-        parlour_electric_fan.set_speed(i)
-    if is_time_between('22:00', '23:00'):
-        parlour_electric_fan.set_oscillation(0)
+def rule_deep_nested_logic():
+    global temp, humidity, retry_count, system_on, night_mode
+    if system_on == True:
+        if temp > 30:
+            living_room_ac.set_temperature(24)
+            while retry_count < 3:
+                if humidity > 80:
+                    for i in range(1, 6):
+                        corridor_light.set_status('on')
+                        corridor_light.set_status('off')
+                    bedroom_fan.set_status('on')
+                retry_count = retry_count + 1
+        if night_mode == True:
+            corridor_light.set_status('on')
 
 # 执行规则
-run_rule('loop_test', rule_loop_test)
+run_rule('deep_nested_logic', rule_deep_nested_logic)

@@ -128,6 +128,10 @@ def get_current_time_str():
 def is_time_between(start, end):
     return start <= get_current_time_str() <= end
 
+def is_time_after(t): return get_current_time_str() >= t
+
+def is_time_before(t): return get_current_time_str() <= t
+
 def run_rule(rule_name, rule_func):
     print(f"\n>>> 激活规则: {rule_name}")
     rule_func()

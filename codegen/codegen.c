@@ -4,16 +4,13 @@
 #include "ast.h"
 #include "codegen.h"
 
-// ==========================================
-// 【新增】全局变量管理
-// ==========================================
+
 #define MAX_GLOBAL_VARS 512
 static char *global_var_names[MAX_GLOBAL_VARS];
 static int global_var_count = 0;
 
 static void add_global_var(char *name) {
     if (global_var_count < MAX_GLOBAL_VARS) {
-        // 查重（可选，但为了生成的代码整洁）
         for (int i = 0; i < global_var_count; i++) {
             if (strcmp(global_var_names[i], name) == 0) return;
         }
@@ -61,11 +58,11 @@ void generate_code(ASTNode *node, int indent) {
         // 导入预定义库
         printf("from preDefinition import *\n");
         printf("import datetime\n\n");
-        
+        /*
         printf("# 补充生成的辅助函数\n");
         printf("def is_time_after(t): return get_current_time_str() >= t\n");
         printf("def is_time_before(t): return get_current_time_str() <= t\n\n");
-        
+        */
         // 继续递归生成后续代码
         for (int i = 0; i < node->child_count; i++) {
             generate_code(node->children[i], indent);
